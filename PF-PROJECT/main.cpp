@@ -11,6 +11,7 @@
 #include "./util.h"
 #include <iostream>
 #include<string>
+#include <fstream>
 #include<cmath> // for basic math functions such as cos, sin, sqrt
 using namespace std;
 
@@ -214,19 +215,63 @@ void MouseClicked(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+// Global variables for window width and height
+int width = 1020, height = 840;
 
 // Map the rgb color to open gl color components
 double mapRanges(double number, double inMin, double inMax, double outMin, double outMax) {
-	return (number - inMin) * (outMax - outMin) / ((inMax - inMin)*1.0) + outMin;
+	return (number - inMin) * (outMax - outMin) / ((inMax - inMin) * 1.0) + outMin;
+}
+
+void init() {
+	glClearColor(mapRanges(65, 0, 255, 0, 1), mapRanges(105, 0, 255, 0, 1), mapRanges(225, 0, 255, 0, 1), 1);
+	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 }
 
 
 void render() {
-	glClearColor(mapRanges(65, 0, 255, 0, 1), mapRanges(105, 0, 255, 0, 1), mapRanges(225, 0, 255, 0, 1), 1);
-	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
-	
-
+	init();
+	cout << "Rendered";
 	glutSwapBuffers();
+}
+
+void showLeaderBoard() {
+	ifstream readHighScores;
+
+	readHighScores.open("./files/highscores.txt", ios::app);
+	if (readHighScores.is_open()) {
+		string leaderBoardNames[10];
+		string leaderBoardScores[10];
+		string line;
+		int count = 0;
+		while (getline(readHighScores, line)) {
+			leaderBoardNames[count] = line;
+			getline(readHighScores, line);
+			leaderBoardScores[count] = line;
+			count++;
+		}
+
+		int totalRecords = count;
+		init();
+
+		DrawString(20, 20, "Hello There", colors[WHITE]);
+
+		// Show the leaderboard
+		for (int i = 0; i < totalRecords; i++) {
+			cout << leaderBoardNames[i] << " : " << leaderBoardScores[i] << endl;
+		 }
+
+	}
+	else {
+		MessageBox(NULL, L"'highscores.txt' file couldn't be opened", L"Error", MB_OK | MB_ICONEXCLAMATION);
+		exit(1);
+	}
+}
+
+void menu(int id) {
+	if (id == 1) {
+		showLeaderBoard();
+	}
 }
 
 
@@ -234,8 +279,6 @@ void render() {
  * our gateway main function
  * */
 int main(int argc, char* argv[]) {
-
-	int width = 1020, height = 840; // i have set my window size to be 800 x 600
 
 	InitRandomizer(); // seed the random number generator...
 	glutInit(&argc, argv); // initialize the graphics library...
@@ -245,20 +288,19 @@ int main(int argc, char* argv[]) {
 	glutCreateWindow("Battleship Game (22i-2660)"); // set the title of our game window
 	SetCanvasSize(width, height); // set the number of pixels...
 
-	// Register your functions to the library,
-	// you are telling the library names of function to call for different tasks.
-	//glutDisplayFunc(display); // tell library which function to call for drawing Canvas.
-	
-	//glutDisplayFunc(GameDisplay); // tell library which function to call for drawing Canvas.
-	//glutSpecialFunc(NonPrintableKeys); // tell library which function to call for non-printable ASCII characters
-	//glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
-	// This function tells the library to call our Timer function after 1000.0/FPS milliseconds...
-	//glutTimerFunc(1000.0, Timer, 0);
-	
 
-	//glutMouseFunc(MouseClicked);
-	//glutPassiveMotionFunc(MouseMoved); // Mouse
-	//glutMotionFunc(MousePressedAndMoved); // Mouse
+
+
+	// Menu Create a MENU
+	int menu_id;
+	menu_id = glutCreateMenu(menu);
+
+	glutAddMenuEntry("View the Leaderboard", 1);
+	glutAddMenuEntry("Start New Game", 2);
+	glutAddMenuEntry("View Balance", 3);
+	glutAddMenuEntry("Options", 2);
+
+	glutAttachMenu(GLUT_RIGHT_BUTTON);
 
 	glutDisplayFunc(render);
 

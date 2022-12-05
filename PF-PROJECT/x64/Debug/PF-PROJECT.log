@@ -1,8 +1,8 @@
 ﻿  main.cpp
 D:\PF-PROJECT\PF-PROJECT\util.h(299,48): warning C4305: 'initializing': truncation from 'double' to 'float'
-D:\PF-PROJECT\PF-PROJECT\main.cpp(225,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(225,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(225,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(228,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(228,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(228,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
 D:\PF-PROJECT\PF-PROJECT\CImg.h(16232,45): warning C4319: '~': zero extending 'unsigned int' to 'double' of greater size
 D:\PF-PROJECT\PF-PROJECT\CImg.h(14785,1): message : while compiling class template member function 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )'
 D:\PF-PROJECT\PF-PROJECT\CImg.h(14663,39): message : see reference to function template instantiation 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )' being compiled
