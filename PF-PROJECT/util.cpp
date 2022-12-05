@@ -423,7 +423,7 @@ void RoundRect(int x, int y, int width, int height, int radius,
 		glVertex2i(top_right[0].x, top_right[0].y);
 
 		glVertex2i(top_left[0].x, top_left[0].y);
-
+		 
 		// Bottom bar
 		glVertex2i(bottom_left[0].x, bottom_left[0].y);
 

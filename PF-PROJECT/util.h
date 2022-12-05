@@ -6,12 +6,12 @@
 #ifndef UTIL_H_
 #define UTIL_H_
 
-//For linux
+//For Windows
 #include <Windows.h>
 #include <GL/glew.h> 
 #include <GL/freeglut.h>
 
-//For Windows
+//For Linux
 //#include <GL\gl.h>
 //#include <GL\glut.h>
 

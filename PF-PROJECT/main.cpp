@@ -100,7 +100,6 @@ void GameDisplay()/**/ {
 }
 
 
-
 /*This function is called (automatically) whenever any non-printable key (such as up-arrow, down-arraw)
  * is pressed from the keyboard
  *
@@ -214,6 +213,23 @@ void MouseClicked(int button, int state, int x, int y) {
 	}
 	glutPostRedisplay();
 }
+
+
+// Map the rgb color to open gl color components
+double mapRanges(double number, double inMin, double inMax, double outMin, double outMax) {
+	return (number - inMin) * (outMax - outMin) / ((inMax - inMin)*1.0) + outMin;
+}
+
+
+void render() {
+	glClearColor(mapRanges(65, 0, 255, 0, 1), mapRanges(105, 0, 255, 0, 1), mapRanges(225, 0, 255, 0, 1), 1);
+	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
+	
+
+	glutSwapBuffers();
+}
+
+
 /*
  * our gateway main function
  * */
@@ -224,7 +240,7 @@ int main(int argc, char* argv[]) {
 	InitRandomizer(); // seed the random number generator...
 	glutInit(&argc, argv); // initialize the graphics library...
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // we will be using color display mode
-	glutInitWindowPosition(50, 50); // set the initial position of our window
+	glutInitWindowPosition(100, 10); // set the initial position of our window
 	glutInitWindowSize(width, height); // set the size of our window
 	glutCreateWindow("Battleship Game (22i-2660)"); // set the title of our game window
 	SetCanvasSize(width, height); // set the number of pixels...
@@ -233,22 +249,23 @@ int main(int argc, char* argv[]) {
 	// you are telling the library names of function to call for different tasks.
 	//glutDisplayFunc(display); // tell library which function to call for drawing Canvas.
 	
-	glutDisplayFunc(GameDisplay); // tell library which function to call for drawing Canvas.
-	glutSpecialFunc(NonPrintableKeys); // tell library which function to call for non-printable ASCII characters
-	glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
+	//glutDisplayFunc(GameDisplay); // tell library which function to call for drawing Canvas.
+	//glutSpecialFunc(NonPrintableKeys); // tell library which function to call for non-printable ASCII characters
+	//glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
 	// This function tells the library to call our Timer function after 1000.0/FPS milliseconds...
-	glutTimerFunc(1000.0, Timer, 0);
+	//glutTimerFunc(1000.0, Timer, 0);
 	
 
-	glutMouseFunc(MouseClicked);
-	glutPassiveMotionFunc(MouseMoved); // Mouse
-	glutMotionFunc(MousePressedAndMoved); // Mouse
+	//glutMouseFunc(MouseClicked);
+	//glutPassiveMotionFunc(MouseMoved); // Mouse
+	//glutMotionFunc(MousePressedAndMoved); // Mouse
+
+	glutDisplayFunc(render);
 
 	// now handle the control to library and it will call our registered functions when
 	// it deems necessary...
 	glutMainLoop();
-
-	cout << "Hello THere, I have compiled the Game, finally :)";
+	
 	return 1;
 }
 #endif /* Battleship_CPP_ */

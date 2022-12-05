@@ -1,1 +1,26 @@
-﻿  PF-PROJECT.vcxproj -> D:\PF-PROJECT\x64\Debug\PF-PROJECT.exe
+﻿  main.cpp
+D:\PF-PROJECT\PF-PROJECT\util.h(299,48): warning C4305: 'initializing': truncation from 'double' to 'float'
+D:\PF-PROJECT\PF-PROJECT\main.cpp(225,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(225,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(225,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\CImg.h(16232,45): warning C4319: '~': zero extending 'unsigned int' to 'double' of greater size
+D:\PF-PROJECT\PF-PROJECT\CImg.h(14785,1): message : while compiling class template member function 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )'
+D:\PF-PROJECT\PF-PROJECT\CImg.h(14663,39): message : see reference to function template instantiation 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )' being compiled
+D:\PF-PROJECT\PF-PROJECT\CImg.h(23037,1): message : see reference to class template instantiation 'cimg_library::CImg<float>::_cimg_math_parser' being compiled
+D:\PF-PROJECT\PF-PROJECT\CImg.h(23028,1): message : while compiling class template member function 'double cimg_library::CImg<float>::_eval(cimg_library::CImg<float> *const ,const char *const ,const double,const double,const double,const double,const cimg_library::CImgList<T> *const ,cimg_library::CImgList<T> *const ) const'
+          with
+          [
+              T=float
+          ]
+D:\PF-PROJECT\PF-PROJECT\CImg.h(23023,7): message : see reference to function template instantiation 'double cimg_library::CImg<float>::_eval(cimg_library::CImg<float> *const ,const char *const ,const double,const double,const double,const double,const cimg_library::CImgList<T> *const ,cimg_library::CImgList<T> *const ) const' being compiled
+          with
+          [
+              T=float
+          ]
+D:\PF-PROJECT\PF-PROJECT\CImg.h(34724,1): message : see reference to class template instantiation 'cimg_library::CImg<float>' being compiled
+D:\PF-PROJECT\PF-PROJECT\CImg.h(19524,1): message : see reference to class template instantiation 'cimg_library::CImg<double>' being compiled
+D:\PF-PROJECT\PF-PROJECT\CImg.h(52471,4): message : see reference to class template instantiation 'cimg_library::CImg<T>' being compiled
+D:\PF-PROJECT\PF-PROJECT\CImg.h(19228,1): warning C4319: '~': zero extending 'unsigned int' to 'double' of greater size
+D:\PF-PROJECT\PF-PROJECT\CImg.h(19226,1): message : while compiling class template member function 'double cimg_library::CImg<float>::_cimg_math_parser::mp_bitwise_not(cimg_library::CImg<float>::_cimg_math_parser &)'
+D:\PF-PROJECT\PF-PROJECT\CImg.h(16231,43): message : see reference to function template instantiation 'double cimg_library::CImg<float>::_cimg_math_parser::mp_bitwise_not(cimg_library::CImg<float>::_cimg_math_parser &)' being compiled
+  PF-PROJECT.vcxproj -> D:\PF-PROJECT\x64\Debug\PF-PROJECT.exe
