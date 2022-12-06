@@ -8,12 +8,15 @@
 
 #ifndef Battleship_CPP_
 #define Battleship_CPP_
-#include "./util.h"
+#include "util.h"
 #include <iostream>
 #include<string>
-#include <fstream>
+#include<fstream>
 #include<cmath> // for basic math functions such as cos, sin, sqrt
 using namespace std;
+
+// Global variables for window width and height
+int width = 1020, height = 700;
 
 // seed the random numbers generator by current time (see the documentation of srand for further help)...
 
@@ -61,44 +64,68 @@ void moveObject() {
  * Main Canvas drawing function.
  * */
 
-void GameDisplay()/**/ {
-	// set the background color using function glClearColor.
-	// to change the background play with the red, green and blue values below.
-	// Note that r, g and b values must be in the range [0,1] where 0 means dim red and 1 means pure red and so on.
 
-	glClearColor(0/*Red Component*/, 0,	//148.0/255/*Green Component*/,
-		0.0/*Blue Component*/, 0 /*Alpha component*/); // Red==Green==Blue==1 --> White Colour
+ // Map the rgb color to open gl color components
+double mapRanges(double number, double inMin, double inMax, double outMin, double outMax) {
+	return (number - inMin) * (outMax - outMin) / ((inMax - inMin) * 1.0) + outMin;
+}
+
+
+void init() {
+	glClearColor(mapRanges(65, 0, 255, 0, 1), mapRanges(105, 0, 255, 0, 1), mapRanges(225, 0, 255, 0, 1), 1);
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
-	//Red Square
-	DrawSquare(400, 20, 40, colors[RED]);
+}
 
-	//Green Square
-	DrawSquare(250, 250, 20, colors[GREEN]);
+void showLeaderBoard() {
+	ifstream readHighScores;
 
-	//Display Score
-	DrawString(50, 800, "Score=0", colors[MISTY_ROSE]);
+	readHighScores.open("./files/highscores.txt", ios::app);
+	if (readHighScores.is_open()) {
+		string leaderBoardNames[10];
+		string leaderBoardScores[10];
+		string line;
+		int count = 0;
+		while (getline(readHighScores, line)) {
+			leaderBoardNames[count] = line;
+			getline(readHighScores, line);
+			leaderBoardScores[count] = line;
+			count++;
+		}
 
-	// Trianlge Vertices v1(300,50) , v2(500,50) , v3(400,250)
-	DrawTriangle(300, 450, 340, 450, 320, 490, colors[MISTY_ROSE]);
+		int totalRecords = count;
+
+		// Show the leaderboard
+
+		DrawString(50, height - 130, "LEADERBOARD", colors[WHITE]);
+		DrawLine(50, height - 150, 200, height - 150, 3, colors[GRAY]);
+		
+		if (totalRecords) {
+			for (int i = 0; i < totalRecords; i++) {
+				string output = leaderBoardNames[i] + "   " + leaderBoardScores[i];
+				DrawString(50, height - 220 - (i * 40), output, colors[WHITE]);
+			}
+		}
+		else {
+			// If the leaderboard is empty
+			DrawString(50, height - 220, "LEADERBOARD IS EMPTY", colors[RED]);
+		}
+	}
+	else {
+		MessageBox(NULL, L"'highscores.txt' file couldn't be opened", L"Error", MB_OK | MB_ICONEXCLAMATION);
+		exit(1);
+	}
+}
 
 
+void GameDisplay()/**/ {
+	init();
+	showLeaderBoard();
 
-	//DrawLine(int x1, int y1, int x2, int y2, int lwidth, float *color)
-	DrawLine(550, 50, 550, 480, 10, colors[MISTY_ROSE]);
-
-	DrawCircle(50, 670, 10, colors[RED]);
-	DrawCircle(70, 670, 10, colors[RED]);
-	DrawCircle(90, 670, 10, colors[RED]);
-	DrawRoundRect(500, 200, 50, 100, colors[DARK_SEA_GREEN], 70);
-	DrawRoundRect(100, 200, 100, 50, colors[DARK_OLIVE_GREEN], 20);
-	DrawRoundRect(100, 100, 50, 100, colors[DARK_OLIVE_GREEN], 30);
-	DrawRoundRect(200, 100, 100, 50, colors[LIME_GREEN], 40);
-	DrawRoundRect(350, 100, 100, 50, colors[LIME_GREEN], 20);
-
-	drawObject();
+	
 	glutSwapBuffers(); // do not modify this line..
 
 }
+
 
 
 /*This function is called (automatically) whenever any non-printable key (such as up-arrow, down-arraw)
@@ -214,67 +241,6 @@ void MouseClicked(int button, int state, int x, int y) {
 	}
 	glutPostRedisplay();
 }
-
-// Global variables for window width and height
-int width = 1020, height = 840;
-
-// Map the rgb color to open gl color components
-double mapRanges(double number, double inMin, double inMax, double outMin, double outMax) {
-	return (number - inMin) * (outMax - outMin) / ((inMax - inMin) * 1.0) + outMin;
-}
-
-void init() {
-	glClearColor(mapRanges(65, 0, 255, 0, 1), mapRanges(105, 0, 255, 0, 1), mapRanges(225, 0, 255, 0, 1), 1);
-	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
-}
-
-
-void render() {
-	init();
-	cout << "Rendered";
-	glutSwapBuffers();
-}
-
-void showLeaderBoard() {
-	ifstream readHighScores;
-
-	readHighScores.open("./files/highscores.txt", ios::app);
-	if (readHighScores.is_open()) {
-		string leaderBoardNames[10];
-		string leaderBoardScores[10];
-		string line;
-		int count = 0;
-		while (getline(readHighScores, line)) {
-			leaderBoardNames[count] = line;
-			getline(readHighScores, line);
-			leaderBoardScores[count] = line;
-			count++;
-		}
-
-		int totalRecords = count;
-		init();
-
-		DrawString(20, 20, "Hello There", colors[WHITE]);
-
-		// Show the leaderboard
-		for (int i = 0; i < totalRecords; i++) {
-			cout << leaderBoardNames[i] << " : " << leaderBoardScores[i] << endl;
-		 }
-
-	}
-	else {
-		MessageBox(NULL, L"'highscores.txt' file couldn't be opened", L"Error", MB_OK | MB_ICONEXCLAMATION);
-		exit(1);
-	}
-}
-
-void menu(int id) {
-	if (id == 1) {
-		showLeaderBoard();
-	}
-}
-
-
 /*
  * our gateway main function
  * */
@@ -283,31 +249,27 @@ int main(int argc, char* argv[]) {
 	InitRandomizer(); // seed the random number generator...
 	glutInit(&argc, argv); // initialize the graphics library...
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // we will be using color display mode
-	glutInitWindowPosition(100, 10); // set the initial position of our window
+	glutInitWindowPosition(50, 10); // set the initial position of our window
 	glutInitWindowSize(width, height); // set the size of our window
-	glutCreateWindow("Battleship Game (22i-2660)"); // set the title of our game window
+	glutCreateWindow("Battleship Game (SE-F-2660)"); // set the title of our game window
 	SetCanvasSize(width, height); // set the number of pixels...
 
+	// Register your functions to the library,
+	// you are telling the library names of function to call for different tasks.
+	//glutDisplayFunc(display); // tell library which function to call for drawing Canvas.
 
+	glutDisplayFunc(GameDisplay); // tell library which function to call for drawing Canvas.
+	glutSpecialFunc(NonPrintableKeys); // tell library which function to call for non-printable ASCII characters
+	glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
+	// This function tells the library to call our Timer function after 1000.0/FPS milliseconds...
 
-
-	// Menu Create a MENU
-	int menu_id;
-	menu_id = glutCreateMenu(menu);
-
-	glutAddMenuEntry("View the Leaderboard", 1);
-	glutAddMenuEntry("Start New Game", 2);
-	glutAddMenuEntry("View Balance", 3);
-	glutAddMenuEntry("Options", 2);
-
-	glutAttachMenu(GLUT_RIGHT_BUTTON);
-
-	glutDisplayFunc(render);
+	//glutMouseFunc(MouseClicked);
+	//glutPassiveMotionFunc(MouseMoved); // Mouse
+	//glutMotionFunc(MousePressedAndMoved); // Mouse
 
 	// now handle the control to library and it will call our registered functions when
 	// it deems necessary...
 	glutMainLoop();
-	
 	return 1;
 }
 #endif /* Battleship_CPP_ */
