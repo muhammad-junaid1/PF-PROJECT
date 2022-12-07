@@ -16,7 +16,7 @@
 using namespace std;
 
 // Global variables for window width and height
-int width = 1020, height = 700;
+int screenWidth = 1250, screenHeight = 600;
 
 // Menu FLag variables
 string currMenuItem = "mainMenu";
@@ -26,11 +26,19 @@ const int boardRows = 14, boardCols = 24;
 const int boardStartX = 150, boardStartY = 520;
 const int boardCellSize = 30;
 
+/*
+	Throughou the program in arrays,
+	'0' represents the empty space/cell
+	'1' represents presence of battleship
+	'/' represents the head of battleship
 
-void SetCanvasSize(int width, int height) {
+*/
+
+
+void SetCanvasSize(int screenWidth, int screenHeight) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0, width, 0, height, -1, 1); // set the screen size to given width and height.
+	glOrtho(0, screenWidth, 0, screenHeight, -1, 1); // set the screen size to given width and height.
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -89,24 +97,29 @@ void init() {
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 }
 
-void fillGameGridArr(char grid[][10]) {
+void fillArray(char grid[][10]) {
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {
-			//grid[i][k] = '0';
-			if (i == 2 && k >= 3 && k <= 5) {
-				grid[i][k] = '1';
-			}
+			grid[i][k] = '0';
+		}
+	}
+}
+
+void fillArray(char grid[][boardCols]) {
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+			grid[i][k] = '0';
 		}
 	}
 }
 
 void displayHeading(string text) {
-	DrawString(50, height - 130, text, colors[WHITE]);
-	DrawLine(50, height - 150, 200, height - 150, 3, colors[GRAY]);
+	DrawString(70, screenHeight - 130, text, colors[WHITE]);
+	DrawLine(70, screenHeight - 150, 200, screenHeight - 150, 3, colors[GRAY]);
 }
 
 void showLeaderBoard() {
-	glClearColor(mapRanges(43, 0, 255, 0, 1), mapRanges(174, 0, 255, 0, 1), mapRanges(102, 0, 255, 0, 1), 1);
+	glClearColor(mapRanges(33, 0, 255, 0, 1), mapRanges(133, 0, 255, 0, 1), mapRanges(38, 0, 255, 0, 1), 1);
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 
 	ifstream readHighScores;
@@ -133,12 +146,12 @@ void showLeaderBoard() {
 		if (totalRecords) {
 			for (int i = 0; i < totalRecords; i++) {
 				string output = leaderBoardNames[i] + "   " + leaderBoardScores[i];
-				DrawString(50, height - 220 - (i * 40), output, colors[WHITE]);
+				DrawString(50, screenHeight - 220 - (i * 40), output, colors[WHITE]);
 			}
 		}
 		else {
 			// If the leaderboard is empty
-			DrawString(50, height - 220, "LEADERBOARD IS EMPTY", colors[RED]);
+			DrawString(70, screenHeight - 220, "LEADERBOARD IS EMPTY", colors[TOMATO]);
 		}
 	}
 	else {
@@ -147,28 +160,102 @@ void showLeaderBoard() {
 	}
 }
 
-void showGameGrid(char gridArr[][10] = {0}, bool isEmpty = 1) {
+void showGameGrid(char gridArr[][10] = { 0 }, bool isEmpty = 1) {
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {
 			int xAxis = boardStartX + (k * boardCellSize) + boardCellSize;
-			int yAxis = boardStartY - (i * boardCellSize) -boardCellSize;
+			int yAxis = boardStartY - (i * boardCellSize) - boardCellSize;
 			if (i == 0) {
-				DrawLine((xAxis), (yAxis), xAxis+boardCellSize, (yAxis), 2, colors[WHITE]);
+				DrawLine((xAxis), (yAxis), xAxis + boardCellSize, (yAxis), 2, colors[WHITE]);
+
+				// Label for x-axis
+				DrawString(xAxis + (boardCellSize / 2) - 8, yAxis + (boardCellSize / 2) - 5, to_string(k + 1), colors[WHITE]);
 			}
 			if (k == 0) {
 				DrawLine((xAxis), (yAxis), xAxis, (yAxis - boardCellSize), 2, colors[WHITE]);
+
+				// Label for y-axis
+				string letter = "";
+				letter += char('A' + i);
+				DrawString(xAxis - (boardCellSize / 2) - 8, yAxis - (boardCellSize)+10, letter, colors[WHITE]);
 			}
 			if (i == (9)) {
-				DrawLine((xAxis), (yAxis-boardCellSize), xAxis+boardCellSize, (yAxis-boardCellSize), 2, colors[WHITE]);
+				DrawLine((xAxis), (yAxis - boardCellSize), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
 			}
 			if (k == 9) {
-				DrawLine((xAxis+boardCellSize), (yAxis), xAxis+boardCellSize, (yAxis-boardCellSize), 2, colors[WHITE]);
+				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
 			}
 			if (!isEmpty) {
 				if (gridArr[i][k] == '1') {
-					DrawSquare(xAxis, yAxis, boardCellSize, colors[RED]);
+					DrawSquare(xAxis, yAxis, boardCellSize - 2, colors[RED]);
 				}
 			}
+		}
+	}
+}
+
+int getXAxis(int colNo, string grid) {
+	int xAxis = boardStartX + (colNo * boardCellSize);
+	if (grid == "gameGrid") {
+		return xAxis + boardCellSize;
+	}
+	else if (grid == "boardGrid") {
+		return xAxis;
+	}
+}
+
+int getYAxis(int rowNo, string grid) {
+	int yAxis = (screenHeight - boardStartY) + (rowNo * boardCellSize) - boardCellSize;
+	if (grid == "gameGrid") {
+		return yAxis + boardCellSize;
+	}
+	else if (grid == "boardGrid") {
+		return yAxis;
+	}
+}
+
+void showBoard(char grid[][boardCols]) {
+	int lineWidth = 1;
+
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+
+			int xAxis = boardStartX + (k * boardCellSize);
+			int yAxis = boardStartY - (i * boardCellSize);
+
+			// For last column
+			if (k == (boardCols - 1)) {
+				DrawLine(xAxis + boardCellSize, yAxis, xAxis + boardCellSize, yAxis - boardCellSize, lineWidth, colors[DIM_GRAY]);
+			}
+
+			// For last row
+			if (i == (boardRows - 1)) {
+				DrawLine(xAxis, yAxis - boardCellSize, xAxis + boardCellSize, yAxis - boardCellSize, lineWidth, colors[DIM_GRAY]);
+			}
+
+			// to bottom
+			DrawLine(xAxis, yAxis, xAxis, yAxis - boardCellSize, lineWidth, colors[DIM_GRAY]);
+			// to right
+			DrawLine(xAxis, yAxis, xAxis + boardCellSize, yAxis, lineWidth, colors[DIM_GRAY]);
+
+			// Battleships on the board options
+			if (grid[i][k] == '/') {
+				DrawTriangle(xAxis+3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize+1, xAxis + boardCellSize, yAxis, colors[SILVER]);
+			}
+			if (grid[i][k] == '1') {
+				DrawRectangle(xAxis, yAxis+1, boardCellSize+2, boardCellSize, colors[LIGHT_GRAY]);
+			}
+		}
+	}
+}
+
+void setBattleshipInBoardOptions(char grid[][boardCols], int row, int col, int length) {
+	for (int i = col; i < col + length; i++) {
+		if (i == col) {
+			grid[row][i] = '/';
+		}
+		else {
+			grid[row][i] = '1';
 		}
 	}
 }
@@ -189,37 +276,51 @@ void startNewGame() {
 	//cin >> color;
 
 	// ColorNames battleShipColor = static_cast<ColorNames>(color);
+
+
+	char boardGrid[boardRows][boardCols];
+	fillArray(boardGrid);
+
+	// 1 Battleship of length 4
+	setBattleshipInBoardOptions(boardGrid, 2, 17, 4);
+
+	// 2 Battleships of length 3
+	setBattleshipInBoardOptions(boardGrid, 4, 14, 3);
+	setBattleshipInBoardOptions(boardGrid, 4, 18, 3);
+
+	// 3 Battleships of length 2
+	setBattleshipInBoardOptions(boardGrid, 6, 13, 2);
+	setBattleshipInBoardOptions(boardGrid, 6, 16, 2);
+	setBattleshipInBoardOptions(boardGrid, 6, 19, 2);
+
+	// 4 Battleships of length 1
+	setBattleshipInBoardOptions(boardGrid, 8, 14, 1);
+	setBattleshipInBoardOptions(boardGrid, 8, 16, 1);
+	setBattleshipInBoardOptions(boardGrid, 8, 18, 1);
+	setBattleshipInBoardOptions(boardGrid, 8, 20, 1);
+
+
+	showBoard(boardGrid);
 	
-
-	int lineWidth = 1;
-	for (int i = 0; i < boardRows; i++) {
-		for (int k = 0; k < boardCols; k++) {
-
-			int xAxis = boardStartX + (k * boardCellSize);
-			int yAxis = boardStartY - (i * boardCellSize);
-
-				// For last column
-				if (k == (boardCols - 1)) {
-					DrawLine(xAxis + boardCellSize, yAxis, xAxis + boardCellSize, yAxis - boardCellSize, 1, colors[DIM_GRAY]);
-				}
-
-				// For last row
-				if (i == (boardRows - 1)) {
-					DrawLine(xAxis, yAxis - boardCellSize, xAxis + boardCellSize, yAxis - boardCellSize, 1, colors[DIM_GRAY]);
-				}
-
-				// to bottom
-				DrawLine(xAxis, yAxis, xAxis, yAxis - boardCellSize, 1, colors[DIM_GRAY]);
-				// to right
-				DrawLine(xAxis, yAxis, xAxis + boardCellSize, yAxis, 1, colors[DIM_GRAY]);
-		}
-	}
-
 	char gameGrid[10][10];
-	fillGameGridArr(gameGrid);
-	showGameGrid(gameGrid, 0);
+	fillArray(gameGrid);
+	showGameGrid();
 
 
+}
+
+void showMenu() {
+	displayHeading("MAIN MENU");
+	DrawRoundRect(70, 50, 300, 350, colors[WHITE], 5);
+
+	DrawRectangle(80, screenHeight - 255, 280, 40, colors[ROYAL_BLUE]);
+	DrawString(90, screenHeight - 240, "View Leaderboard", colors[WHITE]);
+	DrawRectangle(80, screenHeight - 300, 280, 40, colors[ROYAL_BLUE]);
+	DrawString(90, screenHeight - 285, "Start New Game", colors[WHITE]);
+	DrawRectangle(80, screenHeight - 345, 280, 40, colors[ROYAL_BLUE]);
+	DrawString(90, screenHeight - 330, "View Balance", colors[WHITE]);
+	DrawRectangle(80, screenHeight - 390, 280, 40, colors[ROYAL_BLUE]);
+	DrawString(90, screenHeight - 375, "Options", colors[WHITE]);
 }
 
 void viewBalance() {
@@ -229,8 +330,8 @@ void viewBalance() {
 	DrawString(50, 500, "Balance", colors[WHITE]);
 }
 
-void options() {
-	glClearColor(mapRanges(250, 0, 255, 0, 1), mapRanges(112, 0, 255, 0, 1), mapRanges(112, 0, 255, 0, 1), 1);
+void showOptions() {
+	glClearColor(mapRanges(157, 0, 255, 0, 1), mapRanges(126, 0, 255, 0, 1), mapRanges(143, 0, 255, 0, 1), 1);
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 
 	DrawString(50, 500, "Options", colors[WHITE]);
@@ -241,13 +342,7 @@ void GameDisplay()/**/ {
 
 	// Menu
 	if (currMenuItem == "mainMenu") {
-		displayHeading("MAIN MENU");
-		DrawRoundRect(50, 200, 200, 300, colors[WHITE], 5);
-
-		DrawString(60, height - 250, "View Leaderboard", colors[BLACK]);
-		DrawString(60, height - 290, "Start New Game", colors[BLACK]);
-		DrawString(60, height - 330, "View Balance", colors[BLACK]);
-		DrawString(60, height - 370, "Options", colors[BLACK]);
+		showMenu();
 	}
 	else if (currMenuItem == "leaderboard") {
 		showLeaderBoard();
@@ -259,30 +354,19 @@ void GameDisplay()/**/ {
 		viewBalance();
 	}
 	else if (currMenuItem == "options") {
-		options();
+		showOptions();
 	}
 
 	// Main Menu Button
-	DrawRectangle(width - 130, height - 65, 85, 35, colors[RED]);
-	DrawString(width - 120, height - 55, "Main Menu", colors[WHITE]);
+	DrawRectangle(screenWidth - 210, screenHeight - 60, 115, 35, colors[RED]);
+	DrawString(screenWidth - 200, screenHeight - 50, "Main Menu", colors[WHITE]);
 
-	//glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
+	glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
 
 	glutSwapBuffers(); // do not modify this line..
 
 }
 
-
-
-/*This function is called (automatically) whenever any non-printable key (such as up-arrow, down-arraw)
- * is pressed from the keyboard
- *
- * You will have to add the necessary code here when the arrow keys are pressed or any other key is pressed...
- *
- * This function has three argument variable key contains the ASCII of the key pressed, while x and y tells the
- * program coordinates of mouse pointer when key was pressed.
- *
- * */
 
 void NonPrintableKeys(int key, int x, int y) {
 	if (key
@@ -351,23 +435,23 @@ void MouseClicked(int button, int state, int x, int y) {
 	{
 		cout << x << ", " << y << endl;
 
-		if (x >= 1190 && x <= 1305 && y >= 30 && y <= 65) {
+		if (x >= screenWidth - 210 && x <= (screenWidth - 210 + 115) && y >= (screenHeight - (screenHeight - 60) - 35) && y <= (screenHeight - (screenHeight - 60))) {
 			currMenuItem = "mainMenu";
 		}
 
 		if (currMenuItem == "mainMenu") {
-			if (x >= 70 && x <= 330) {
+			if (x >= 80 && x <= 360) {
 				// Leaderboard button
-				if (y >= 230 && y <= 260) {
+				if (y >= (screenHeight - (screenHeight - 255) - 40) && y <= screenHeight - (screenHeight - 255)) {
 					currMenuItem = "leaderboard";
 				}
-				else if (y >= 270 && y <= 300) {
+				else if (y >= (screenHeight - (screenHeight - 300) - 40) && y <= screenHeight - (screenHeight - 300)) {
 					currMenuItem = "startNewGame";
 				}
-				else if (y >= 310 && y <= 340) {
+				else if (y >= (screenHeight - (screenHeight - 345) - 40) && y <= screenHeight - (screenHeight - 345)) {
 					currMenuItem = "viewBalance";
 				}
-				else if (y >= 350 && y <= 380) {
+				else if (y >= (screenHeight - (screenHeight - 390) - 40) && y <= screenHeight - (screenHeight - 390)) {
 					currMenuItem = "options";
 				}
 			}
@@ -386,10 +470,10 @@ int main(int argc, char* argv[]) {
 	InitRandomizer(); // seed the random number generator...
 	glutInit(&argc, argv); // initialize the graphics library...
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA); // we will be using color display mode
-	glutInitWindowPosition(50, 10); // set the initial position of our window
-	glutInitWindowSize(width, height); // set the size of our window
+	glutInitWindowPosition(50, 30); // set the initial position of our window
+	glutInitWindowSize(screenWidth, screenHeight); // set the size of our window
 	glutCreateWindow("Battleship Game (SE-F-2660)"); // set the title of our game window
-	SetCanvasSize(width, height); // set the number of pixels...
+	SetCanvasSize(screenWidth, screenHeight);
 
 	// Register your functions to the library,
 	// you are telling the library names of function to call for different tasks.
