@@ -18,12 +18,15 @@ using namespace std;
 // Global variables for window width and height
 int width = 1020, height = 700;
 
-// seed the random numbers generator by current time (see the documentation of srand for further help)...
+// Menu FLag variables
+string currMenuItem = "mainMenu";
 
-/* Function sets canvas size (drawing area) in pixels...
- *  that is what dimensions (x and y) your game will have
- *  Note that the bottom-left coordinate has value (0,0) and top-right coordinate has value (width-1,height-1)
- * */
+// Constant values
+const int boardRows = 14, boardCols = 24;
+const int boardStartX = 150, boardStartY = 520;
+const int boardCellSize = 30;
+
+
 void SetCanvasSize(int width, int height) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -60,6 +63,17 @@ void moveObject() {
 	}
 }
 
+
+void PrintableKeys(unsigned char key, int x, int y) {
+	if (key == 27/* Escape key ASCII*/) {
+		exit(1); // exit the program when escape key is pressed.
+	}
+
+	cout << x << ", " << y << endl;
+
+	glutPostRedisplay();
+}
+
 /*
  * Main Canvas drawing function.
  * */
@@ -70,13 +84,31 @@ double mapRanges(double number, double inMin, double inMax, double outMin, doubl
 	return (number - inMin) * (outMax - outMin) / ((inMax - inMin) * 1.0) + outMin;
 }
 
-
 void init() {
 	glClearColor(mapRanges(65, 0, 255, 0, 1), mapRanges(105, 0, 255, 0, 1), mapRanges(225, 0, 255, 0, 1), 1);
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 }
 
+void fillGameGridArr(char grid[][10]) {
+	for (int i = 0; i < 10; i++) {
+		for (int k = 0; k < 10; k++) {
+			//grid[i][k] = '0';
+			if (i == 2 && k >= 3 && k <= 5) {
+				grid[i][k] = '1';
+			}
+		}
+	}
+}
+
+void displayHeading(string text) {
+	DrawString(50, height - 130, text, colors[WHITE]);
+	DrawLine(50, height - 150, 200, height - 150, 3, colors[GRAY]);
+}
+
 void showLeaderBoard() {
+	glClearColor(mapRanges(43, 0, 255, 0, 1), mapRanges(174, 0, 255, 0, 1), mapRanges(102, 0, 255, 0, 1), 1);
+	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
+
 	ifstream readHighScores;
 
 	readHighScores.open("./files/highscores.txt", ios::app);
@@ -96,9 +128,8 @@ void showLeaderBoard() {
 
 		// Show the leaderboard
 
-		DrawString(50, height - 130, "LEADERBOARD", colors[WHITE]);
-		DrawLine(50, height - 150, 200, height - 150, 3, colors[GRAY]);
-		
+		displayHeading("LEADERBOARD");
+
 		if (totalRecords) {
 			for (int i = 0; i < totalRecords; i++) {
 				string output = leaderBoardNames[i] + "   " + leaderBoardScores[i];
@@ -116,12 +147,127 @@ void showLeaderBoard() {
 	}
 }
 
+void showGameGrid(char gridArr[][10] = {0}, bool isEmpty = 1) {
+	for (int i = 0; i < 10; i++) {
+		for (int k = 0; k < 10; k++) {
+			int xAxis = boardStartX + (k * boardCellSize) + boardCellSize;
+			int yAxis = boardStartY - (i * boardCellSize) -boardCellSize;
+			if (i == 0) {
+				DrawLine((xAxis), (yAxis), xAxis+boardCellSize, (yAxis), 2, colors[WHITE]);
+			}
+			if (k == 0) {
+				DrawLine((xAxis), (yAxis), xAxis, (yAxis - boardCellSize), 2, colors[WHITE]);
+			}
+			if (i == (9)) {
+				DrawLine((xAxis), (yAxis-boardCellSize), xAxis+boardCellSize, (yAxis-boardCellSize), 2, colors[WHITE]);
+			}
+			if (k == 9) {
+				DrawLine((xAxis+boardCellSize), (yAxis), xAxis+boardCellSize, (yAxis-boardCellSize), 2, colors[WHITE]);
+			}
+			if (!isEmpty) {
+				if (gridArr[i][k] == '1') {
+					DrawSquare(xAxis, yAxis, boardCellSize, colors[RED]);
+				}
+			}
+		}
+	}
+}
+
+void startNewGame() {
+	glClearColor(mapRanges(120, 0, 255, 0, 1), mapRanges(81, 0, 255, 0, 1), mapRanges(169, 0, 255, 0, 1), 1);
+	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
+
+	bool inputTaken = false;
+
+	//int color;
+	//string userName;
+	// Take the input data
+	//cout << "Enter your name: ";
+	//getline(cin, userName);
+
+	//cout << "Color of the battleships: ";
+	//cin >> color;
+
+	// ColorNames battleShipColor = static_cast<ColorNames>(color);
+	
+
+	int lineWidth = 1;
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+
+			int xAxis = boardStartX + (k * boardCellSize);
+			int yAxis = boardStartY - (i * boardCellSize);
+
+				// For last column
+				if (k == (boardCols - 1)) {
+					DrawLine(xAxis + boardCellSize, yAxis, xAxis + boardCellSize, yAxis - boardCellSize, 1, colors[DIM_GRAY]);
+				}
+
+				// For last row
+				if (i == (boardRows - 1)) {
+					DrawLine(xAxis, yAxis - boardCellSize, xAxis + boardCellSize, yAxis - boardCellSize, 1, colors[DIM_GRAY]);
+				}
+
+				// to bottom
+				DrawLine(xAxis, yAxis, xAxis, yAxis - boardCellSize, 1, colors[DIM_GRAY]);
+				// to right
+				DrawLine(xAxis, yAxis, xAxis + boardCellSize, yAxis, 1, colors[DIM_GRAY]);
+		}
+	}
+
+	char gameGrid[10][10];
+	fillGameGridArr(gameGrid);
+	showGameGrid(gameGrid, 0);
+
+
+}
+
+void viewBalance() {
+	glClearColor(mapRanges(156, 0, 255, 0, 1), mapRanges(37, 0, 255, 0, 1), mapRanges(77, 0, 255, 0, 1), 1);
+	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
+
+	DrawString(50, 500, "Balance", colors[WHITE]);
+}
+
+void options() {
+	glClearColor(mapRanges(250, 0, 255, 0, 1), mapRanges(112, 0, 255, 0, 1), mapRanges(112, 0, 255, 0, 1), 1);
+	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
+
+	DrawString(50, 500, "Options", colors[WHITE]);
+}
 
 void GameDisplay()/**/ {
 	init();
-	showLeaderBoard();
 
-	
+	// Menu
+	if (currMenuItem == "mainMenu") {
+		displayHeading("MAIN MENU");
+		DrawRoundRect(50, 200, 200, 300, colors[WHITE], 5);
+
+		DrawString(60, height - 250, "View Leaderboard", colors[BLACK]);
+		DrawString(60, height - 290, "Start New Game", colors[BLACK]);
+		DrawString(60, height - 330, "View Balance", colors[BLACK]);
+		DrawString(60, height - 370, "Options", colors[BLACK]);
+	}
+	else if (currMenuItem == "leaderboard") {
+		showLeaderBoard();
+	}
+	else if (currMenuItem == "startNewGame") {
+		startNewGame();
+	}
+	else if (currMenuItem == "viewBalance") {
+		viewBalance();
+	}
+	else if (currMenuItem == "options") {
+		options();
+	}
+
+	// Main Menu Button
+	DrawRectangle(width - 130, height - 65, 85, 35, colors[RED]);
+	DrawString(width - 120, height - 55, "Main Menu", colors[WHITE]);
+
+	//glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
+
 	glutSwapBuffers(); // do not modify this line..
 
 }
@@ -166,26 +312,6 @@ void NonPrintableKeys(int key, int x, int y) {
 
 }
 
-/*This function is called (automatically) whenever any printable key (such as x,b, enter, etc.)
- * is pressed from the keyboard
- * This function has three argument variable key contains the ASCII of the key pressed, while x and y tells the
- * program coordinates of mouse pointer when key was pressed.
- * */
-void PrintableKeys(unsigned char key, int x, int y) {
-	if (key == 27/* Escape key ASCII*/) {
-		exit(1); // exit the program when escape key is pressed.
-	}
-
-	if (key == 'b' || key == 'B') //Key for placing the bomb
-	{
-		//do something if b is pressed
-		cout << "b pressed" << endl;
-
-	}
-	glutPostRedisplay();
-}
-
-
 
 /*
  * This function is called after every 1000.0/FPS milliseconds
@@ -219,28 +345,39 @@ void MouseMoved(int x, int y) {
 	glutPostRedisplay();
 }
 
-/*This function is called (automatically) whenever your mouse button is clicked witin inside the game window
- *
- * You will have to add the necessary code here for shooting, etc.
- *
- * This function has four arguments: button (Left, Middle or Right), state (button is pressed or released),
- * x & y that tells the coordinate of current position of move mouse
- *
- * */
 void MouseClicked(int button, int state, int x, int y) {
 
 	if (button == GLUT_LEFT_BUTTON) // dealing only with left button
 	{
-		cout << GLUT_DOWN << " " << GLUT_UP << endl;
+		cout << x << ", " << y << endl;
+
+		if (x >= 1190 && x <= 1305 && y >= 30 && y <= 65) {
+			currMenuItem = "mainMenu";
+		}
+
+		if (currMenuItem == "mainMenu") {
+			if (x >= 70 && x <= 330) {
+				// Leaderboard button
+				if (y >= 230 && y <= 260) {
+					currMenuItem = "leaderboard";
+				}
+				else if (y >= 270 && y <= 300) {
+					currMenuItem = "startNewGame";
+				}
+				else if (y >= 310 && y <= 340) {
+					currMenuItem = "viewBalance";
+				}
+				else if (y >= 350 && y <= 380) {
+					currMenuItem = "options";
+				}
+			}
+		}
 
 	}
-	else if (button == GLUT_RIGHT_BUTTON) // dealing with right button
-	{
-		cout << "Right Button Pressed" << endl;
 
-	}
 	glutPostRedisplay();
 }
+
 /*
  * our gateway main function
  * */
@@ -260,10 +397,9 @@ int main(int argc, char* argv[]) {
 
 	glutDisplayFunc(GameDisplay); // tell library which function to call for drawing Canvas.
 	glutSpecialFunc(NonPrintableKeys); // tell library which function to call for non-printable ASCII characters
-	glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
 	// This function tells the library to call our Timer function after 1000.0/FPS milliseconds...
 
-	//glutMouseFunc(MouseClicked);
+	glutMouseFunc(MouseClicked);
 	//glutPassiveMotionFunc(MouseMoved); // Mouse
 	//glutMotionFunc(MousePressedAndMoved); // Mouse
 
