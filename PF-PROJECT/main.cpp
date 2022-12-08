@@ -92,21 +92,21 @@ void init() {
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 }
 
-void fillArray(char grid[][10]) {
-	for (int i = 0; i < 10; i++) {
-		for (int k = 0; k < 10; k++) {
-			grid[i][k] = '0';
-		}
-	}
-}
+//void fillArray(char grid[][10]) {
+	//for (int i = 0; i < 10; i++) {
+		//for (int k = 0; k < 10; k++) {
+			//grid[i][k] = '0';
+		//}
+	//}
+//}
 
-void fillArray(char grid[][boardCols]) {
-	for (int i = 0; i < boardRows; i++) {
-		for (int k = 0; k < boardCols; k++) {
-			grid[i][k] = '0';
-		}
-	}
-}
+//void fillArray(char grid[][boardCols]) {
+	//for (int i = 0; i < boardRows; i++) {
+		//for (int k = 0; k < boardCols; k++) {
+			//grid[i][k] = '0';
+		//}
+	//}
+//}
 
 void displayHeading(string text) {
 	DrawString(70, screenHeight - 130, text, colors[WHITE]);
@@ -155,7 +155,7 @@ void showLeaderBoard() {
 	}
 }
 
-void showGameGrid(char gridArr[][10] = { 0 }, bool isEmpty = 1) {
+void showGameGrid() {
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {
 			int xAxis = boardStartX + (k * boardCellSize) + boardCellSize;
@@ -180,10 +180,12 @@ void showGameGrid(char gridArr[][10] = { 0 }, bool isEmpty = 1) {
 			if (k == 9) {
 				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
 			}
-			if (!isEmpty) {
-				if (gridArr[i][k] == '1') {
-					DrawSquare(xAxis, yAxis, boardCellSize - 2, colors[RED]);
-				}
+			if (gameGrid[i][k] == '1') {
+				cout << endl << "<x-axis>" << xAxis << " <y-axis>" << yAxis << endl;
+				DrawSquare(xAxis, yAxis, boardCellSize - 2, colors[RED]);
+			}
+			if (gameGrid[i][k] == '/') {
+				DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
 			}
 		}
 	}
@@ -246,7 +248,7 @@ int getRow(int yAxis, string grid) {
 	return row;
 }
 
-void showBoard(char grid[][boardCols]) {
+void showBoard() {
 	int lineWidth = 1;
 
 	for (int i = 0; i < boardRows; i++) {
@@ -255,15 +257,15 @@ void showBoard(char grid[][boardCols]) {
 			int xAxis = boardStartX + (k * boardCellSize);
 			int yAxis = boardStartY - (i * boardCellSize);
 
-			if (grid[i][k] != '/' && grid[i][k] != '1') {
+			if (boardGrid[i][k] != '/' && boardGrid[i][k] != '1') {
 				DrawBorderedRect(xAxis, yAxis, boardCellSize, boardCellSize, 1, colors[DIM_GRAY]);
 			}
 			else {
 				// Battleships on the board options
-				if (grid[i][k] == '/') {
+				if (boardGrid[i][k] == '/') {
 					DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
 				}
-				if (grid[i][k] == '1') {
+				if (boardGrid[i][k] == '1') {
 					DrawRectangle(xAxis, yAxis + 1, boardCellSize + 2, boardCellSize, colors[LIGHT_GRAY]);
 				}
 			}
@@ -286,7 +288,7 @@ void startNewGame() {
 	glClearColor(mapRanges(120, 0, 255, 0, 1), mapRanges(81, 0, 255, 0, 1), mapRanges(169, 0, 255, 0, 1), 1);
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
 
-	bool inputTaken = false;
+	//bool inputTaken = false;
 
 	//int color;
 	//string userName;
@@ -303,11 +305,13 @@ void startNewGame() {
 
 	// Draw all the ships in options area
 	for (int i = 0; i < 10; i++) {
-		setBattleshipInBoardOptions(boardGrid, shipsInOptions[i][2], shipsInOptions[i][3], shipsInOptions[i][1]);
+		if (shipsInOptions[i][0]) {
+			setBattleshipInBoardOptions(boardGrid, shipsInOptions[i][2], shipsInOptions[i][3], shipsInOptions[i][1]);
+		}
 	}
 
 	// Display the board array
-	showBoard(boardGrid);
+	showBoard();
 	
 	// Display the game grid
 	showGameGrid();
@@ -442,12 +446,18 @@ void copyShipInfo(int info[], int arr[]) {
 	}
 }
 
+void resetShipInfo(int ship[]) {
+	for (int i = 0; i < 4; i++) {
+		ship[i] = 0;
+	}
+}
+
 void MouseClicked(int button, int state, int x, int y) {
 
 	if (button == GLUT_LEFT_BUTTON) // dealing only with left button
 	{
 		cout << x << ", " << y << endl;
-
+		
 		if (x >= screenWidth - 210 && x <= (screenWidth - 210 + 115) && y >= (screenHeight - (screenHeight - 60) - 35) && y <= (screenHeight - (screenHeight - 60))) {
 			currMenuItem = "mainMenu";
 		}
@@ -476,9 +486,15 @@ void MouseClicked(int button, int state, int x, int y) {
 				&& y >= (screenHeight - boardStartY) + boardCellSize && y <= (screenHeight - boardStartY) + boardCellSize + (10 * boardCellSize)) {
 
 				if (activeShip[0]) {
+
+					int activeShipId = activeShip[0];
+					int activeShipLength = activeShip[1];
+					int activeShipRow = activeShip[2];
+					int activeShipCol = activeShip[3];
+
 					int row = getRow(y, "gameGrid");
 					int col = getCol(x, "gameGrid");
-					int lengthOfShip = activeShip[1];
+					int lengthOfShip = activeShipLength;
 					
 					for (int i = (col - (lengthOfShip - 1)); i <= col; i++) {
 						// Draw the head of ship	
@@ -491,7 +507,11 @@ void MouseClicked(int button, int state, int x, int y) {
 					}
 
 					// Remove the selected ship
-					
+					for (int i = (activeShipCol); i < (activeShipCol + activeShipLength); i++) {
+						boardGrid[activeShipRow][i] = '0';
+					}
+					resetShipInfo(shipsInOptions[activeShipId-1]);
+					resetShipInfo(activeShip);
 				}
 			}
 
