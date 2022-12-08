@@ -181,11 +181,10 @@ void showGameGrid() {
 				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
 			}
 			if (gameGrid[i][k] == '1') {
-				cout << endl << "<x-axis>" << xAxis << " <y-axis>" << yAxis << endl;
-				DrawSquare(xAxis, yAxis, boardCellSize - 2, colors[RED]);
+				DrawRectangle(xAxis, yAxis + 1 - boardCellSize, boardCellSize + 2, boardCellSize, colors[RED]);
 			}
 			if (gameGrid[i][k] == '/') {
-				DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
+				DrawTriangle(xAxis + 3, yAxis - boardCellSize + (boardCellSize / 2), xAxis + boardCellSize, yAxis -boardCellSize + boardCellSize + 1, xAxis + boardCellSize, yAxis - boardCellSize, colors[SILVER]);
 			}
 		}
 	}
@@ -194,13 +193,13 @@ void showGameGrid() {
 
 void DrawBorderedRect(int sx, int sy, int width, int height, int borderWidth, float* color) {
 
-	// bottom left to bottom right
+	// top left to top right
 	DrawLine(sx, sy, sx + width, sy, borderWidth, color);
-	// bottom right to top right
+	// top right to bottom right
 	DrawLine(sx + width, sy, sx + width, sy + height, borderWidth, color);
-	// top right to top left
+	// bottom right to bottom left
 	DrawLine(sx + width, sy + height, sx, sy + height, borderWidth, color);
-	// top left to bottom left
+	// bottom left to top left
 	DrawLine(sx, sy + height, sx, sy, borderWidth, color);
 }
 
@@ -266,7 +265,7 @@ void showBoard() {
 					DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
 				}
 				if (boardGrid[i][k] == '1') {
-					DrawRectangle(xAxis, yAxis + 1, boardCellSize + 2, boardCellSize, colors[LIGHT_GRAY]);
+					DrawRectangle(xAxis, yAxis + 1, boardCellSize + 2, boardCellSize, colors[RED]);
 				}
 			}
 		}
