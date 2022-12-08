@@ -31,10 +31,11 @@ char boardGrid[boardRows][boardCols];
 char gameGrid[10][10];
 
 /*
-	Throughou the program in arrays,
+	Throughout the program in arrays,
 	'0' represents the empty space/cell
 	'1' represents presence of battleship
 	'/' represents the head of battleship
+	'-' represents hover border effect
 
 */
 
@@ -155,6 +156,18 @@ void showLeaderBoard() {
 	}
 }
 
+
+void DrawBorderedRect(int sx, int sy, int width, int height, int borderWidth, float* color) {
+	// bottom left to bottom right
+	DrawLine(sx, sy, sx + width, sy, borderWidth, color);
+	// bottom right to top right
+	DrawLine(sx + width, sy, sx + width, sy + height, borderWidth, color);
+	// top right to top left
+	DrawLine(sx + width, sy + height, sx, sy + height, borderWidth, color);
+	// top left to bottom left
+	DrawLine(sx, sy + height, sx, sy, borderWidth, color);
+}
+
 void showGameGrid() {
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {
@@ -180,27 +193,24 @@ void showGameGrid() {
 			if (k == 9) {
 				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
 			}
+			// Ship
 			if (gameGrid[i][k] == '1') {
 				DrawRectangle(xAxis, yAxis + 1 - boardCellSize, boardCellSize + 2, boardCellSize, colors[RED]);
 			}
+			// Ship head
 			if (gameGrid[i][k] == '/') {
 				DrawTriangle(xAxis + 3, yAxis - boardCellSize + (boardCellSize / 2), xAxis + boardCellSize, yAxis -boardCellSize + boardCellSize + 1, xAxis + boardCellSize, yAxis - boardCellSize, colors[SILVER]);
 			}
+			// Hover valid border effect
+			if (gameGrid[i][k] == '-') {
+				DrawBorderedRect(xAxis, yAxis - boardCellSize, activeShip[1] * (boardCellSize) - boardCellSize - boardCellSize, boardCellSize, 1, colors[GREEN_YELLOW]);
+			}
+			// Hover invalid border effect
+			if (gameGrid[i][k] == '=') {
+				DrawBorderedRect(xAxis, yAxis - boardCellSize, activeShip[1] * (boardCellSize)-boardCellSize - boardCellSize, boardCellSize, 1, colors[RED]);
+			}
 		}
 	}
-}
-
-
-void DrawBorderedRect(int sx, int sy, int width, int height, int borderWidth, float* color) {
-
-	// top left to top right
-	DrawLine(sx, sy, sx + width, sy, borderWidth, color);
-	// top right to bottom right
-	DrawLine(sx + width, sy, sx + width, sy + height, borderWidth, color);
-	// bottom right to bottom left
-	DrawLine(sx + width, sy + height, sx, sy + height, borderWidth, color);
-	// bottom left to top left
-	DrawLine(sx, sy + height, sx, sy, borderWidth, color);
 }
 
 
@@ -422,20 +432,54 @@ void Timer(int m) {
 	glutTimerFunc(100, Timer, 0);
 }
 
-/*This function is called (automatically) whenever your mouse moves witin inside the game window
- *
- * You will have to add the necessary code here for finding the direction of shooting
- *
- * This function has two arguments: x & y that tells the coordinate of current position of move mouse
- *
- * */
-void MousePressedAndMoved(int x, int y) {
-	cout << x << " " << y << endl;
-	glutPostRedisplay();
-}
+
 void MouseMoved(int x, int y) {
-	//cout << x << " " << y << endl;
-	glutPostRedisplay();
+//
+//	// Reset the hover border effect
+//	for (int i = 0; i < 10; i++) {
+//		for (int k = 0; k < 10; k++) {
+//			if ((gameGrid[i][k] == '-')) {
+//				gameGrid[i][k] = '0';
+//			}
+//		}
+//	}
+//	if (x >= boardStartX + boardCellSize && x <= boardStartX + boardCellSize + (10 * boardCellSize)
+//		&& y >= (screenHeight - boardStartY) + boardCellSize && y <= (screenHeight - boardStartY) + boardCellSize + (10 * boardCellSize)) {
+//		if (activeShip[0]) {
+//
+//			int row = getRow(y, "gameGrid");
+//			int col = getCol(x, "gameGrid");
+//			int lengthOfShip = activeShip[1];
+//
+//			int colStart = (col - (lengthOfShip - 1));
+//			int colEnd = col;
+//
+//			if (colStart >= 0) {
+//				bool isValid = true;
+//				for (int i = colStart; i <= colEnd; i++) {
+//					if (gameGrid[row][i] == '1' || gameGrid[row][i] == '/') {
+//						isValid = false;
+//						break;
+//					}
+//				}
+//				if (isValid) {
+//					for (int i = colStart; i <= colEnd; i++) {
+//						gameGrid[row][i] = '-';
+//					}
+//				}
+//				else {
+//					for (int i = colStart; i <= colEnd; i++) {
+//						if (gameGrid[row][i] != '1' && gameGrid[row][i] != '/') {
+//							gameGrid[row][i] = '=';
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//
+//	glutPostRedisplay();
 }
 
 
@@ -484,20 +528,28 @@ void MouseClicked(int button, int state, int x, int y) {
 			if (x >= boardStartX + boardCellSize && x <= boardStartX + boardCellSize + (10 * boardCellSize)
 				&& y >= (screenHeight - boardStartY) + boardCellSize && y <= (screenHeight - boardStartY) + boardCellSize + (10 * boardCellSize)) {
 
-				if (activeShip[0]) {
+				int activeShipId = activeShip[0];
+				int activeShipLength = activeShip[1];
+				int activeShipRow = activeShip[2];
+				int activeShipCol = activeShip[3];
 
-					int activeShipId = activeShip[0];
-					int activeShipLength = activeShip[1];
-					int activeShipRow = activeShip[2];
-					int activeShipCol = activeShip[3];
+				int row = getRow(y, "gameGrid");
+				int col = getCol(x, "gameGrid");
+				int lengthOfShip = activeShipLength;
+				int colStart = (col - (lengthOfShip - 1));
+				int colEnd = col;
 
-					int row = getRow(y, "gameGrid");
-					int col = getCol(x, "gameGrid");
-					int lengthOfShip = activeShipLength;
-					
-					for (int i = (col - (lengthOfShip - 1)); i <= col; i++) {
+				bool isValid = true;
+				for (int i = colStart; i <= col; i++) {
+					if (gameGrid[row][i] == '/' || gameGrid[row][i] == '1') {
+						isValid = false;
+					}
+				}
+
+				if (activeShipId && (colStart >= 0) && (isValid)) {
+					for (int i = colStart; i <= col; i++) {
 						// Draw the head of ship	
-						if (i == col - (lengthOfShip - 1)) {
+						if (i == colStart) {
 							gameGrid[row][i] = '/';
 						}
 						else {
@@ -555,7 +607,7 @@ int main(int argc, char* argv[]) {
 	// This function tells the library to call our Timer function after 1000.0/FPS milliseconds...
 
 	glutMouseFunc(MouseClicked);
-	//glutPassiveMotionFunc(MouseMoved); // Mouse
+	glutPassiveMotionFunc(MouseMoved); // Mouse
 	//glutMotionFunc(MousePressedAndMoved); // Mouse
 
 	// now handle the control to library and it will call our registered functions when
