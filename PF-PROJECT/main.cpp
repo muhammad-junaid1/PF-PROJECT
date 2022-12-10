@@ -22,6 +22,7 @@ int screenWidth = 1250, screenHeight = 600;
 string currMenuItem = "mainMenu";
 string hoverMessageText = "";
 bool outsideHover = true;
+bool showBattleButton = false;
 
 // Constant values
 const int boardRows = 14, boardCols = 24;
@@ -62,15 +63,6 @@ void SetCanvasSize(int screenWidth, int screenHeight) {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
-
-
-int xI = 400, yI = 400;
-
-void drawObject() {
-	DrawSquare(xI, yI, 20, colors[WHITE]);
-	glutPostRedisplay();
-}
-
 
 void PrintableKeys(unsigned char key, int x, int y) {
 	if (key == 27/* Escape key ASCII*/) {
@@ -205,7 +197,6 @@ void showGameGrid() {
 			if (gameGrid[i][k] == '1') {
 				DrawRectangle(xAxis, yAxis + 1 - boardCellSize, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
 			}
-
 		}
 	}
 }
@@ -311,6 +302,57 @@ bool isShipAlreadyThere(string direction, int lineNo, int start) {
 	return isValid;
 }
 
+// Check, if ship has space/distance of minimum 1 around it
+bool shipDistanceOf1(int x, int y) {
+	int row = getRow(y, "gameGrid");
+	int col = getCol(x, "gameGrid");
+	int colStart = col;
+	int colEnd = col + activeShip[1] - 1;
+
+	bool isShipDistant = true;
+
+	// Upper line
+	if (row > 0) {
+		for (int i = colStart - 1; i <= colEnd + 1; i++) {
+			if (i >= 0 && i <= 10) {
+				if ((gameGrid[row - 1][i] == '1' || gameGrid[row - 1][i] == '/')) {
+					isShipDistant = false;
+					break;
+				}
+			}
+		}
+	}
+
+	// Lower line
+	if (row < 9) {
+		for (int i = colStart - 1; i <= colEnd + 1; i++) {
+			if (i >= 0 && i <= 9) {
+				if ((gameGrid[row + 1][i] == '1' || gameGrid[row + 1][i] == '/')) {
+					isShipDistant = false;
+					break;
+				}
+			}
+		}
+	}
+
+	// Left 
+	if (colStart - 1 >= 0) {
+		if (((gameGrid[row][colStart - 1]) == '1' || (gameGrid[row][colStart - 1]) == '/')) {
+			isShipDistant = false;
+		}
+	}
+
+	// Right
+	if (colEnd + 1 <= 9) {
+		if ((gameGrid[row][colEnd + 1]) == '1' || (gameGrid[row][colEnd + 1]) == '/') {
+			isShipDistant = false;
+		}
+	}
+
+	return isShipDistant;
+}
+
+
 void startNewGame() {
 	glClearColor(mapRanges(120, 0, 255, 0, 1), mapRanges(81, 0, 255, 0, 1), mapRanges(169, 0, 255, 0, 1), 1);
 	glClear(GL_COLOR_BUFFER_BIT); //Update the colors
@@ -337,7 +379,6 @@ void startNewGame() {
 		}
 	}
 
-
 	// Display the board array
 	showBoard();
 	
@@ -349,12 +390,18 @@ void startNewGame() {
 	int hoverShipCol = hoverShipInfo[1];
 
 	if (!outsideHover) {
-		if (hoverShipRow < 0 || hoverShipCol < 0) {
+		if (hoverShipCol < 0) {
 			hoverMessageText = "Out of boundary!";
+			DrawBorderedRect(getXAxis(0, "gameGrid"), (screenHeight - getYAxis(hoverShipRow, "gameGrid") - (boardCellSize)), boardCellSize * (activeShip[1]+hoverShipCol), boardCellSize, 3, colors[RED]);
 		} else if (isShipAlreadyThere("horizontal", hoverShipRow, hoverShipCol)) {
 			hoverMessageText = "Ship is already there!";
 			DrawBorderedRect(getXAxis(hoverShipCol, "gameGrid"), (screenHeight - getYAxis(hoverShipRow, "gameGrid") - (boardCellSize)), boardCellSize * activeShip[1], boardCellSize, 3, colors[RED]);
-		} else {
+		}
+		else if (!shipDistanceOf1(getXAxis(hoverShipCol, "gameGrid"), getYAxis(hoverShipRow, "gameGrid"))) {
+			hoverMessageText = "Should have a distance of at least 1 cell!";
+			DrawBorderedRect(getXAxis(hoverShipCol, "gameGrid"), (screenHeight - getYAxis(hoverShipRow, "gameGrid") - (boardCellSize)), boardCellSize * activeShip[1], boardCellSize, 3, colors[DARK_CYAN]);
+		}
+		else {
 			if (hoverShipRow != 1000 && hoverShipCol != 1000) {
 					DrawBorderedRect(getXAxis(hoverShipCol, "gameGrid"), (screenHeight - getYAxis(hoverShipRow, "gameGrid") - (boardCellSize)), boardCellSize * activeShip[1], boardCellSize, 3, colors[BLACK]);
 					hoverMessageText = "";
@@ -369,6 +416,9 @@ void startNewGame() {
 	if (activeShip[0]) {
 		DrawBorderedRect(getXAxis(activeShip[3], "boardGrid"), screenHeight - getYAxis(activeShip[2], "boardGrid"), boardCellSize * activeShip[1], boardCellSize, 3, colors[WHITE]);
 	}
+
+	// Show/Hide Battle button
+
 }
 
 void showMenu() {
@@ -434,21 +484,16 @@ void NonPrintableKeys(int key, int x, int y) {
 	if (key
 		== GLUT_KEY_LEFT /*GLUT_KEY_LEFT is constant and contains ASCII for left arrow key*/) {
 		// what to do when left key is pressed...
-		xI -= 10;
-
 	}
 	else if (key
 		== GLUT_KEY_RIGHT /*GLUT_KEY_RIGHT is constant and contains ASCII for right arrow key*/) {
-		xI += 10;
 	}
 	else if (key
 		== GLUT_KEY_UP/*GLUT_KEY_UP is constant and contains ASCII for up arrow key*/) {
-		yI += 10;
 	}
 
 	else if (key
 		== GLUT_KEY_DOWN/*GLUT_KEY_DOWN is constant and contains ASCII for down arrow key*/) {
-		yI -= 10;
 	}
 
 	/* This function calls the Display function to redo the drawing. Whenever you need to redraw just call
@@ -472,7 +517,6 @@ void Timer(int m) {
 	glutTimerFunc(100, Timer, 0);
 }
 
-
 void MouseMoved(int x, int y) {
 	if (x >= boardStartX + boardCellSize && x <= boardStartX + boardCellSize + (10 * boardCellSize)
 		&& y >= (screenHeight - boardStartY) + boardCellSize && y <= (screenHeight - boardStartY) + boardCellSize + (10 * boardCellSize)) {
@@ -486,10 +530,6 @@ void MouseMoved(int x, int y) {
 
 			hoverShipInfo[0] = row;
 			hoverShipInfo[1] = colStart;
-
-			if (isShipAlreadyThere("horizontal", row, colStart)) {
-				hoverMessageText = "Ship is already there!";
-			}
 
 		}
 	}
@@ -559,17 +599,10 @@ void MouseClicked(int button, int state, int x, int y) {
 				int colStart = (col - (lengthOfShip - 1));
 				int colEnd = col;
 
-				bool isValid = true;
-				for (int i = colStart; i <= col; i++) {
-					if (gameGrid[row][i] == '/' || gameGrid[row][i] == '1') {
-						isValid = false;
-					}
-				}
-
-				if (activeShipId && (isValid) && (colStart >= 0)) {
+				// If all of the validations are done, and no error occured, place the ship
+				if (activeShipId && (shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(colEnd, "gameGrid"))) && (!isShipAlreadyThere("horizontal", row, colStart)) && (colStart >= 0)) {
 					// Place the battleship
 					for (int i = colStart; i <= col; i++) {
-
 						// Head of ship	
 						if (i == colStart) {
 							gameGrid[row][i] = '/';
