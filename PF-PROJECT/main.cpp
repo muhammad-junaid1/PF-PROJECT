@@ -314,7 +314,7 @@ bool shipDistanceOf1(int x, int y) {
 	// Upper line
 	if (row > 0) {
 		for (int i = colStart - 1; i <= colEnd + 1; i++) {
-			if (i >= 0 && i <= 10) {
+			if (i >= 0 && i <= 9) {
 				if ((gameGrid[row - 1][i] == '1' || gameGrid[row - 1][i] == '/')) {
 					isShipDistant = false;
 					break;
@@ -599,8 +599,9 @@ void MouseClicked(int button, int state, int x, int y) {
 				int colStart = (col - (lengthOfShip - 1));
 				int colEnd = col;
 
+
 				// If all of the validations are done, and no error occured, place the ship
-				if (activeShipId && (shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(colEnd, "gameGrid"))) && (!isShipAlreadyThere("horizontal", row, colStart)) && (colStart >= 0)) {
+				if (activeShipId && (shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(row, "gameGrid"))) && (!isShipAlreadyThere("horizontal", row, colStart)) && (colStart >= 0)) {
 					// Place the battleship
 					for (int i = colStart; i <= col; i++) {
 						// Head of ship	
