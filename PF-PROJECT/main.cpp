@@ -22,7 +22,6 @@ int screenWidth = 1250, screenHeight = 600;
 string currMenuItem = "mainMenu";
 string hoverMessageText = "";
 bool outsideHover = true;
-bool showBattleButton = false;
 
 // Constant values
 const int boardRows = 14, boardCols = 24;
@@ -352,6 +351,11 @@ bool shipDistanceOf1(int x, int y) {
 	return isShipDistant;
 }
 
+void showBattleButton() {
+	DrawRectangle(getXAxis(18, "boardGrid") - 15, screenHeight - getYAxis(11, "boardGrid"), 3 * (boardCellSize) + 15, boardCellSize*1.5, colors[BLACK]);
+	DrawString(getXAxis(18, "boardGrid") + 10, screenHeight - getYAxis(11, "boardGrid")+15, "Battle!", colors[WHITE]);
+}
+
 
 void startNewGame() {
 	glClearColor(mapRanges(120, 0, 255, 0, 1), mapRanges(81, 0, 255, 0, 1), mapRanges(169, 0, 255, 0, 1), 1);
@@ -418,12 +422,25 @@ void startNewGame() {
 	}
 
 	// Show/Hide Battle button
+	bool areAllShipsPlaced = true;
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+			if (boardGrid[i][k] == '1' || boardGrid[i][k] == '/') {
+				areAllShipsPlaced = false;
+			}
+		}
+	}
+
+	if (areAllShipsPlaced) {
+		showBattleButton();
+	}
+
 
 }
 
 void showMenu() {
 	displayHeading("MAIN MENU");
-	DrawRoundRect(70, 195, 300, 220, colors[WHITE], 5);
+	DrawRoundRect(70, 195, 300, 215, colors[WHITE], 5);
 
 	DrawRectangle(80, screenHeight - 255, 280, 40, colors[ROYAL_BLUE]);
 	DrawString(90, screenHeight - 240, "View Leaderboard", colors[WHITE]);
@@ -645,6 +662,11 @@ void MouseClicked(int button, int state, int x, int y) {
 	glutPostRedisplay();
 }
 
+void resize(int width, int height) {
+	// we ignore the params and do:
+	glutReshapeWindow(screenWidth, screenHeight);
+}
+
 /*
  * our gateway main function
  * */
@@ -658,9 +680,10 @@ int main(int argc, char* argv[]) {
 	glutCreateWindow("Battleship Game (SE-F-2660)"); // set the title of our game window
 	SetCanvasSize(screenWidth, screenHeight);
 
+	glutReshapeFunc(resize);
+
 	// Register your functions to the library,
 	// you are telling the library names of function to call for different tasks.
-	//glutDisplayFunc(display); // tell library which function to call for drawing Canvas.
 
 	glutDisplayFunc(GameDisplay); // tell library which function to call for drawing Canvas.
 	glutSpecialFunc(NonPrintableKeys); // tell library which function to call for non-printable ASCII characters

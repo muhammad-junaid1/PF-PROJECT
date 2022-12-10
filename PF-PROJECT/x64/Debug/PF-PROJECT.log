@@ -1,35 +1,38 @@
 ﻿  main.cpp
 D:\PF-PROJECT\PF-PROJECT\util.h(299,48): warning C4305: 'initializing': truncation from 'double' to 'float'
-D:\PF-PROJECT\PF-PROJECT\main.cpp(88,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(88,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(88,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(109,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(114,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(114,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(114,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(141,39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(146,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(176,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(176,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(184,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(184,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(357,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(357,54): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(357,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(413,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(413,21): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(429,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(431,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(433,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(435,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(439,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(439,54): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(439,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(446,84): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(446,54): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(446,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(474,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\PF-PROJECT\PF-PROJECT\main.cpp(474,25): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(87,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(87,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(87,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(108,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(113,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(113,53): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(113,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(140,39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(145,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(175,77): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(175,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(183,72): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(183,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(355,129): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(356,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(356,39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(361,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(361,54): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(361,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(417,52): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(417,21): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(446,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(448,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(450,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(452,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(456,83): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(456,54): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(456,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(463,84): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(463,54): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(463,24): warning C4244: 'argument': conversion from 'double' to 'GLclampf', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(491,45): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\PF-PROJECT\PF-PROJECT\main.cpp(491,25): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
 D:\PF-PROJECT\PF-PROJECT\CImg.h(16232,45): warning C4319: '~': zero extending 'unsigned int' to 'double' of greater size
 D:\PF-PROJECT\PF-PROJECT\CImg.h(14785,1): message : while compiling class template member function 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )'
 D:\PF-PROJECT\PF-PROJECT\CImg.h(14663,39): message : see reference to function template instantiation 'unsigned int cimg_library::CImg<float>::_cimg_math_parser::compile(char *,char *,const unsigned int,unsigned int *const )' being compiled
@@ -50,6 +53,6 @@ D:\PF-PROJECT\PF-PROJECT\CImg.h(52471,4): message : see reference to class templ
 D:\PF-PROJECT\PF-PROJECT\CImg.h(19228,1): warning C4319: '~': zero extending 'unsigned int' to 'double' of greater size
 D:\PF-PROJECT\PF-PROJECT\CImg.h(19226,1): message : while compiling class template member function 'double cimg_library::CImg<float>::_cimg_math_parser::mp_bitwise_not(cimg_library::CImg<float>::_cimg_math_parser &)'
 D:\PF-PROJECT\PF-PROJECT\CImg.h(16231,43): message : see reference to function template instantiation 'double cimg_library::CImg<float>::_cimg_math_parser::mp_bitwise_not(cimg_library::CImg<float>::_cimg_math_parser &)' being compiled
-D:\PF-PROJECT\PF-PROJECT\main.cpp(213): warning C4715: 'getXAxis': not all control paths return a value
-D:\PF-PROJECT\PF-PROJECT\main.cpp(223): warning C4715: 'getYAxis': not all control paths return a value
+D:\PF-PROJECT\PF-PROJECT\main.cpp(212): warning C4715: 'getXAxis': not all control paths return a value
+D:\PF-PROJECT\PF-PROJECT\main.cpp(222): warning C4715: 'getYAxis': not all control paths return a value
   PF-PROJECT.vcxproj -> D:\PF-PROJECT\x64\Debug\PF-PROJECT.exe
