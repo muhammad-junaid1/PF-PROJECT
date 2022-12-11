@@ -23,6 +23,8 @@ int screenWidth = 1250, screenHeight = 600;
 string currMenuItem = "mainMenu";
 string hoverMessageText = "";
 bool outsideHover = true;
+string loadingMessage = "";
+bool autoButtonClicked = false;
 
 // Constant values
 const int boardRows = 14, boardCols = 24;
@@ -52,6 +54,16 @@ int shipsInOptions[10][4] = {
 	// 2 -> Row No
 	// 3 -> Col No
 	{1, 4, 2, 17}, 
+	{2, 3, 4, 14}, {3, 3, 4, 18},
+	{4, 2, 6, 13}, {5, 2, 6, 16}, {6, 2, 6, 19},
+	{7, 1, 8, 14}, {8, 1, 8, 16}, {9, 1, 8, 18}, {10, 1, 8, 20}
+};
+int shipsInOptionsCopy[10][4] = {
+	// 0 -> ID of ship
+	// 1 -> Length of ship
+	// 2 -> Row No
+	// 3 -> Col No
+	{1, 4, 2, 17},
 	{2, 3, 4, 14}, {3, 3, 4, 18},
 	{4, 2, 6, 13}, {5, 2, 6, 16}, {6, 2, 6, 19},
 	{7, 1, 8, 14}, {8, 1, 8, 16}, {9, 1, 8, 18}, {10, 1, 8, 20}
@@ -133,7 +145,6 @@ void showLeaderBoard() {
 		int totalRecords = count;
 
 		// Show the leaderboard
-
 		displayHeading("LEADERBOARD");
 
 		if (totalRecords) {
@@ -153,85 +164,27 @@ void showLeaderBoard() {
 	}
 }
 
-
-void DrawBorderedRect(int sx, int sy, int width, int height, int borderWidth, float* color) {
-	// bottom left to bottom right
-	DrawLine(sx, sy, sx + width, sy, borderWidth, color);
-	// bottom right to top right
-	DrawLine(sx + width, sy, sx + width, sy + height, borderWidth, color);
-	// top right to top left
-	DrawLine(sx + width, sy + height, sx, sy + height, borderWidth, color);
-	// top left to bottom left
-	DrawLine(sx, sy + height, sx, sy, borderWidth, color);
+void resetShipInfo(int ship[]) {
+	for (int i = 0; i < 4; i++) {
+		ship[i] = 0;
+	}
 }
 
-void showGameGrid(char grid[][10], bool myGrid = 0) {
+void resetGameGrid() {
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {
-			int xAxis = boardStartX + (k * boardCellSize) + boardCellSize;
-			int yAxis = boardStartY - (i * boardCellSize) - boardCellSize;
-			if (myGrid) {
-				xAxis += (boardCellSize * (boardCols-10));
-			}
-			if (i == 0) {
-				DrawLine((xAxis), (yAxis), xAxis + boardCellSize, (yAxis), 2, colors[WHITE]);
-
-				// Label for x-axis
-				DrawString(xAxis + (boardCellSize / 2) - 8, yAxis + (boardCellSize / 2) - 5, to_string(k + 1), colors[WHITE]);
-			}
-			if (k == 0) {
-				DrawLine((xAxis), (yAxis), xAxis, (yAxis - boardCellSize), 2, colors[WHITE]);
-
-				// Label for y-axis
-				string letter = "";
-				letter += char('A' + i);
-				DrawString(xAxis - (boardCellSize / 2) - 8, yAxis - (boardCellSize)+10, letter, colors[WHITE]);
-			}
-			if (i == (9)) {
-				DrawLine((xAxis), (yAxis - boardCellSize), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
-			}
-			if (k == 9) {
-				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
-			}
-			// Ship head
-			if (grid[i][k] == '/') {
-				DrawTriangle(xAxis + 3, yAxis - boardCellSize + (boardCellSize / 2), xAxis + boardCellSize, yAxis - boardCellSize + boardCellSize + 1, xAxis + boardCellSize, yAxis - boardCellSize, colors[SILVER]);
-			}
-			// Ship
-			if (grid[i][k] == '1') {
-				DrawRectangle(xAxis, yAxis + 1 - boardCellSize, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
-			}
+			gameGrid[i][k] = '0';
 		}
 	}
 }
 
-
-int getXAxis(int colNo, string grid) {
-	int xAxis = boardStartX + (colNo * boardCellSize);
-	if (grid == "gameGrid") {
-		return xAxis + boardCellSize;
-	}
-	else if (grid == "boardGrid") {
-		return xAxis;
-	}
-}
-
-int getYAxis(int rowNo, string grid) {
-	int yAxis = (screenHeight - boardStartY) + (rowNo * boardCellSize);
-	if (grid == "gameGrid") {
-		return yAxis + boardCellSize;
-	}
-	else if (grid == "boardGrid") {
-		return yAxis;
-	}
-}
 
 int getCol(int xAxis, string grid) {
 	int col = -1;
 	if (grid == "gameGrid") {
 		col = (xAxis - boardStartX - (boardCellSize)) / boardCellSize;
 	}
-	else if(grid == "boardGrid") {
+	else if (grid == "boardGrid") {
 		col = (xAxis - boardStartX) / boardCellSize;
 	}
 
@@ -241,70 +194,56 @@ int getCol(int xAxis, string grid) {
 int getRow(int yAxis, string grid) {
 	int row = -1;
 	if (grid == "gameGrid") {
-		row = ((yAxis) + boardStartY - (boardCellSize) - (screenHeight)) / (boardCellSize);
+		row = ((yAxis)+boardStartY - (boardCellSize)-(screenHeight)) / (boardCellSize);
 	}
 	else if (grid == "boardGrid") {
-		row = ((yAxis-screenHeight) + (boardStartY) + (boardCellSize)) / (boardCellSize);
+		row = ((yAxis - screenHeight) + (boardStartY)+(boardCellSize)) / (boardCellSize);
 	}
 	return row;
 }
 
-void showBoard() {
-	int lineWidth = 1;
 
-	for (int i = 0; i < boardRows; i++) {
-		for (int k = 0; k < boardCols; k++) {
-
-			int xAxis = boardStartX + (k * boardCellSize);
-			int yAxis = boardStartY - (i * boardCellSize);
-
-			if (boardGrid[i][k] != '/' && boardGrid[i][k] != '1') {
-				DrawBorderedRect(xAxis, yAxis, boardCellSize, boardCellSize, 1, colors[DIM_GRAY]);
+bool isShipAlreadyThere(string direction, int lineNo, int start, int length = 0) {
+	bool isShipThere = false;
+	if (direction == "horizontal") {
+		if (length == 0) {
+			for (int i = start; i < start + activeShip[1]; i++) {
+					if (gameGrid[lineNo][i] == '/' || gameGrid[lineNo][i] == '1') {
+						isShipThere = true;
+						break;
+					}
 			}
-			else {
-				// Battleships on the board options
-				if (boardGrid[i][k] == '/') {
-					DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
-				}
-				if (boardGrid[i][k] == '1') {
-					DrawRectangle(xAxis, yAxis + 1, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
-				}
-			}
-		}
-	}
-}
-
-void setBattleshipInBoardOptions(char grid[][boardCols], int row, int col, int length) {
-	for (int i = col; i < col + length; i++) {
-		if (i == col) {
-			grid[row][i] = '/';
 		}
 		else {
-			grid[row][i] = '1';
-		}
-	}
-}
-
-bool isShipAlreadyThere(string direction, int lineNo, int start) {
-	bool isValid = false;
-	if (direction == "horizontal") {
-		for (int i = start; i < start + activeShip[1]; i++) {
-			if (gameGrid[lineNo][i] == '/' || gameGrid[lineNo][i] == '1') {
-				isValid = true;
-				break;
+			for (int i = start; i < start + length; i++) {
+					if (computerGameGrid[lineNo][i] == '/' || computerGameGrid[lineNo][i] == '1') {
+						isShipThere = true;
+						break;
+					} 
 			}
 		}
 	}
 	else if (direction == "vertical") {
-		for (int i = start; i < start + activeShip[1]; i++) {
-			if (gameGrid[i][lineNo] == '/' || gameGrid[i][lineNo] == '1') {
-				isValid = true;
-				break;
+		if (length == 0) {
+			for (int i = start; i < start + activeShip[1]; i++) {
+				if (gameGrid[i][lineNo] == '/' || gameGrid[i][lineNo] == '1') {
+					isShipThere = true;
+					break;
+				}
+			}
+		}
+		else {
+			for (int i = start; i < start + length; i++) {
+					if (computerGameGrid[i][lineNo] == '/' || computerGameGrid[i][lineNo] == '1') {
+						isShipThere = true;
+						break;
+					}
 			}
 		}
 	}
-	return isValid;
+	return isShipThere;
 }
+
 
 // Check, if ship has space/distance of minimum 1 around it
 bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0) {
@@ -362,6 +301,188 @@ bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0) {
 	return isShipDistant;
 }
 
+
+int getXAxis(int colNo, string grid) {
+	int xAxis = boardStartX + (colNo * boardCellSize);
+	if (grid == "gameGrid") {
+		return xAxis + boardCellSize;
+	}
+	else if (grid == "boardGrid") {
+		return xAxis;
+	}
+}
+
+int getYAxis(int rowNo, string grid) {
+	int yAxis = (screenHeight - boardStartY) + (rowNo * boardCellSize);
+	if (grid == "gameGrid") {
+		return yAxis + boardCellSize;
+	}
+	else if (grid == "boardGrid") {
+		return yAxis;
+	}
+}
+
+void copyShipInfo(int info[], int arr[]) {
+	for (int i = 0; i < 4; i++) {
+		arr[i] = info[i];
+	}
+}
+
+int arrayForRand[100];
+int lengthOfRandArr = 100;
+
+void autoPlaceShips(string grid = "gameGrid") {
+	if (grid == "gameGrid") {
+		if (activeShip[0]) {
+			// Remove the selected ship if any
+			for (int i = (activeShip[3]); i < (activeShip[3] + activeShip[1]); i++) {
+				boardGrid[activeShip[2]][i] = '0';
+			}
+
+			// Remove the active ship if any
+			resetShipInfo(activeShip);
+		}
+	}
+
+	// Iterate through each ship
+	int ship = 0;
+	while (ship < 10) {
+		srand(time(0));
+		int randRow = rand() % 10;
+		int randCol = rand() % 10;
+		int lengthOfShip = shipsInOptions[ship][1];
+		int colStart = (randCol - (lengthOfShip - 1));
+		int colEnd = randCol;
+
+
+		// If all of the validations are done, and no error occured, place the ship
+		if ((shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(randRow, "gameGrid"), lengthOfShip)) && (!isShipAlreadyThere("horizontal", randRow, colStart)) && (colStart >= 0)) {
+
+			// Place the battleship
+			for (int i = colStart; i <= colEnd; i++) {
+				// Head of ship	
+				if (i == colStart) {
+					gameGrid[randRow][i] = '/';
+				}
+				else {
+					// Rest of the ship
+					gameGrid[randRow][i] = '1';
+				}
+			}
+			ship++;
+		}
+		else {
+			continue;
+		}
+	}
+
+	// Clear the board
+	for (int i = 0; i < 10; i++) {
+		for (int k = 0; k < 10; k++) {
+			shipsInOptions[i][k] = 0;
+		}
+	}
+
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+			boardGrid[i][k] = '0';
+		}
+	}
+
+	loadingMessage = "";
+
+}
+
+
+void DrawBorderedRect(int sx, int sy, int width, int height, int borderWidth, float* color) {
+	// bottom left to bottom right
+	DrawLine(sx, sy, sx + width, sy, borderWidth, color);
+	// bottom right to top right
+	DrawLine(sx + width, sy, sx + width, sy + height, borderWidth, color);
+	// top right to top left
+	DrawLine(sx + width, sy + height, sx, sy + height, borderWidth, color);
+	// top left to bottom left
+	DrawLine(sx, sy + height, sx, sy, borderWidth, color);
+}
+
+void showGameGrid(char grid[][10], bool myGrid = 0) {
+	for (int i = 0; i < 10; i++) {
+		for (int k = 0; k < 10; k++) {
+			int xAxis = boardStartX + (k * boardCellSize) + boardCellSize;
+			int yAxis = boardStartY - (i * boardCellSize) - boardCellSize;
+			if (myGrid) {
+				xAxis += (boardCellSize * (boardCols-12));
+			}
+			if (i == 0) {
+				DrawLine((xAxis), (yAxis), xAxis + boardCellSize, (yAxis), 2, colors[WHITE]);
+
+				// Label for x-axis
+				DrawString(xAxis + (boardCellSize / 2) - 8, yAxis + (boardCellSize / 2) - 5, to_string(k + 1), colors[WHITE]);
+			}
+			if (k == 0) {
+				DrawLine((xAxis), (yAxis), xAxis, (yAxis - boardCellSize), 2, colors[WHITE]);
+
+				// Label for y-axis
+				string letter = "";
+				letter += char('A' + i);
+				DrawString(xAxis - (boardCellSize / 2) - 8, yAxis - (boardCellSize)+10, letter, colors[WHITE]);
+			}
+			if (i == (9)) {
+				DrawLine((xAxis), (yAxis - boardCellSize), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
+			}
+			if (k == 9) {
+				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
+			}
+			// Ship head
+			if (grid[i][k] == '/') {
+				DrawTriangle(xAxis + 3, yAxis - boardCellSize + (boardCellSize / 2), xAxis + boardCellSize, yAxis - boardCellSize + boardCellSize + 1, xAxis + boardCellSize, yAxis - boardCellSize, colors[SILVER]);
+			}
+			// Ship
+			if (grid[i][k] == '1') {
+				DrawRectangle(xAxis, yAxis + 1 - boardCellSize, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
+			}
+		}
+	}
+}
+
+
+void showBoard() {
+	int lineWidth = 1;
+
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+
+			int xAxis = boardStartX + (k * boardCellSize);
+			int yAxis = boardStartY - (i * boardCellSize);
+
+			if (boardGrid[i][k] != '/' && boardGrid[i][k] != '1') {
+				DrawBorderedRect(xAxis, yAxis, boardCellSize, boardCellSize, 1, colors[DIM_GRAY]);
+			}
+			else {
+				// Battleships on the board options
+				if (boardGrid[i][k] == '/') {
+					DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
+				}
+				if (boardGrid[i][k] == '1') {
+					DrawRectangle(xAxis, yAxis + 1, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
+				}
+			}
+		}
+	}
+}
+
+void setBattleshipInBoardOptions(char grid[][boardCols], int row, int col, int length) {
+	for (int i = col; i < col + length; i++) {
+		if (i == col) {
+			grid[row][i] = '/';
+		}
+		else {
+			grid[row][i] = '1';
+		}
+	}
+}
+
+
 void showBattleButton() {
 	// Battle button to start the battle
 	DrawRectangle(getXAxis(18, "boardGrid"), screenHeight - getYAxis(11, "boardGrid"), 3.5 * (boardCellSize), boardCellSize * 1.5, colors[BLACK]);
@@ -372,6 +493,18 @@ void autoPlaceButton() {
 	// AUTO/RANDOM button to place the ships randomly in the grid
 	DrawRectangle(getXAxis(12, "boardGrid"), screenHeight - getYAxis(11, "boardGrid"), 3 * (boardCellSize), boardCellSize * 1.3, colors[DARK_ORANGE]);
 	DrawString(getXAxis(12, "boardGrid") + 25, screenHeight - getYAxis(11, "boardGrid") + 15, "Auto", colors[WHITE]);
+}
+
+bool areAllShipsPlaced() {
+	bool shipsPlaced = true;
+	for (int i = 0; i < boardRows; i++) {
+		for (int k = 0; k < boardCols; k++) {
+			if (boardGrid[i][k] == '1' || boardGrid[i][k] == '/') {
+				shipsPlaced = false;
+			}
+		}
+	}
+	return shipsPlaced;
 }
 
 void startNewGame() {
@@ -434,26 +567,22 @@ void startNewGame() {
 	// Message Text
 	DrawString(getXAxis(5, "boardGrid"), screenHeight - getYAxis(15, "boardGrid"), hoverMessageText, colors[WHITE]);
 
+	DrawString(getXAxis(5, "boardGrid"), screenHeight - getYAxis(15, "boardGrid"), loadingMessage, colors[WHITE]);
+
 	// Show border around the active ship on clicking it
 	if (activeShip[0]) {
 		DrawBorderedRect(getXAxis(activeShip[3], "boardGrid"), screenHeight - getYAxis(activeShip[2], "boardGrid"), boardCellSize * activeShip[1], boardCellSize, 3, colors[WHITE]);
 	}
 
 	// Show/Hide Battle button
-	bool areAllShipsPlaced = true;
-	for (int i = 0; i < boardRows; i++) {
-		for (int k = 0; k < boardCols; k++) {
-			if (boardGrid[i][k] == '1' || boardGrid[i][k] == '/') {
-				areAllShipsPlaced = false;
-			}
-		}
-	}
 
-	if (areAllShipsPlaced) {
+	if (areAllShipsPlaced()) {
 		showBattleButton();
 	}
 	
-	autoPlaceButton();
+	if (!autoButtonClicked) {
+		autoPlaceButton();
+	}
 }
 
 void showMenu() {
@@ -485,9 +614,11 @@ void showOptions() {
 }
 
 void showBattle() {
-	showGameGrid(computerGameGrid);
+	showBoard();
 
-	showGameGrid(gameGrid, 1);
+	autoPlaceShips("computerGameGrid");
+	showGameGrid(computerGameGrid);
+	showGameGrid(gameGrid, true);
 }
 
 void GameDisplay()/**/ {
@@ -516,6 +647,7 @@ void GameDisplay()/**/ {
 	// Main Menu Button
 	DrawRectangle(screenWidth - 210, screenHeight - 60, 115, 35, colors[RED]);
 	DrawString(screenWidth - 200, screenHeight - 50, "Main Menu", colors[WHITE]);
+
 
 	glutKeyboardFunc(PrintableKeys); // tell library which function to call for printable ASCII characters
 
@@ -589,78 +721,6 @@ void MouseMoved(int x, int y) {
 	glutPostRedisplay();
 }
 
-
-void copyShipInfo(int info[], int arr[]) {
-	for (int i = 0; i < 4; i++) {
-		arr[i] = info[i];
-	}
-}
-
-void resetShipInfo(int ship[]) {
-	for (int i = 0; i < 4; i++) {
-		ship[i] = 0;
-	}
-}
-
-void resetGameGrid() {
-	for (int i = 0; i < 10; i++) {
-		for (int k = 0; k < 10; k++) {
-			gameGrid[i][k] = '0';
-		}
-	}
-}
-
-void autoPlaceShips() {
-	if (activeShip[0]) {
-		// Remove the selected ship if any
-		for (int i = (activeShip[3]); i < (activeShip[3] + activeShip[1]); i++) {
-			boardGrid[activeShip[2]][i] = '0';
-		}
-
-		// Remove the active ship if any
-		resetShipInfo(activeShip);
-			
-	}
-
-	// Remove all the ships in the grid
-	// resetGameGrid();
-
-	//// Iterate through each ship
-	/*int ship = 0;
-	while(ship < 10) {
-		srand(time(0));
-		int randRow = rand() % 10;
-		int randCol = rand() % 10;
-
-		int lengthOfShip = shipsInOptions[ship][1];
-		int colStart = (randCol - (lengthOfShip - 1));
-		int colEnd = randCol;*/
-
-
-		// If all of the validations are done, and no error occured, place the ship
-		//if ((shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(randRow, "gameGrid"), lengthOfShip)) && (!isShipAlreadyThere("horizontal", randRow, colStart)) && (colStart >= 0)) {
-
-		//	// Place the battleship
-		//	for (int i = colStart; i <= colEnd; i++) {
-		//		// Head of ship	
-		//		if (i == colStart) {
-		//			gameGrid[randRow][i] = '/';
-		//		}
-		//		else {
-		//			// Rest of the ship
-		//			gameGrid[randRow][i] = '1';
-		//		}
-		//	}
-
-		//	//resetShipInfo(shipsInOptions[ship]);
-		//	ship++;
-		//}
-		//else {
-		//	continue;
-		//}
-	//}
-}
-
 void MouseClicked(int button, int state, int x, int y) {
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) // dealing only with left button
@@ -707,7 +767,7 @@ void MouseClicked(int button, int state, int x, int y) {
 
 
 				// If all of the validations are done, and no error occured, place the ship
-				if (activeShipId && (shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(row, "gameGrid"))) && (!isShipAlreadyThere("horizontal", row, colStart)) && (colStart >= 0)) {
+				if (activeShipId && (shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(row, "gameGrid"))) && (!isShipAlreadyThere("horizontal", row, colStart, 0)) && (colStart >= 0)) {
 					// Place the battleship
 					for (int i = colStart; i <= colEnd; i++) {
 						// Head of ship	
@@ -747,11 +807,14 @@ void MouseClicked(int button, int state, int x, int y) {
 
 				// Detect click on AUTO button
 				if (x >= 510 && x <= 600 && y >= 370 && y <= 410) {
-					autoPlaceShips();
+					loadingMessage = "Loading...";
+					autoButtonClicked = true;
+					resetGameGrid();
+					autoPlaceShips("gameGrid");
 				}
 
 				// Detect click on Battle button
-				if (x >= 690 && x <= 790 && y >= 365 && y <= 410) {
+				if (x >= 690 && x <= 790 && y >= 365 && y <= 410 && areAllShipsPlaced()) {
 					currMenuItem = "battle";
 				}
 
