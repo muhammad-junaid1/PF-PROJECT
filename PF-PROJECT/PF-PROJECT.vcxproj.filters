@@ -33,4 +33,15 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="shuffle.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="shuffle.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="shuffle.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

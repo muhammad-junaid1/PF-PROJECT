@@ -144,6 +144,11 @@
   <ItemGroup>
     <None Include="..\.gitignore" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="shuffle.bmp" />
+    <Image Include="shuffle.jpg" />
+    <Image Include="shuffle.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

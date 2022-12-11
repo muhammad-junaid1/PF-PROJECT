@@ -456,16 +456,16 @@ string Num2Str(int t) {
 
 void ReadImage(string imgname, vector<unsigned char> &imgArray) {
 	using namespace cimg_library;
-	CImg<unsigned char> img(imgname.c_str());
-	imgArray.resize(img.height() * img.width() * 3, 0);
+	CImg<unsigned char> image(imgname.c_str());
+	imgArray.resize(image.height() * image.width() * 3, 0);
 	int k = 0;
-	unsigned char *rp = img.data();
-	unsigned char *gp = img.data() + img.height() * img.width();
-	unsigned char *bp = gp + img.height() * img.width();
+	unsigned char *rp = image.data();
+	unsigned char *gp = image.data() + image.height() * image.width();
+	unsigned char *bp = gp + image.height() * image.width();
 
-	for (int j = 0; j < img.width(); ++j) {
+	for (int j = 0; j < image.width(); ++j) {
 		int t = j;
-		for (int i = 0; i < img.height(); ++i, t += img.width()) {
+		for (int i = 0; i < image.height(); ++i, t += image.width()) {
 			imgArray[k++] = rp[t];
 			imgArray[k++] = gp[t];
 			imgArray[k++] = bp[t];
