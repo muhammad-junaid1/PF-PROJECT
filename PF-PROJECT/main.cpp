@@ -39,9 +39,9 @@ char computerGameGrid[10][10];
 
 /*
 	Throughout the program in arrays,
-	'0' represents the empty space/cell
+	'e' represents the empty space/cell
+	'h' represnts head
 	'1' represents presence of battleship
-	'/' represents the head of battleship
 */
 
 // 0 -> Row
@@ -174,7 +174,7 @@ void resetShipInfo(int ship[]) {
 void resetGameGrid() {
 	for (int i = 0; i < 10; i++) {
 		for (int k = 0; k < 10; k++) {
-			gameGrid[i][k] = '0';
+			gameGrid[i][k] = 'e';
 		}
 	}
 }
@@ -209,7 +209,7 @@ bool isShipAlreadyThere(string direction, int lineNo, int start, int length = 0)
 	if (direction == "horizontal") {
 		if (length == 0) {
 			for (int i = start; i < start + activeShip[1]; i++) {
-				if (gameGrid[lineNo][i] == '/' || gameGrid[lineNo][i] == '1') {
+				if (gameGrid[lineNo][i] -48 >=0 && gameGrid[lineNo][i]-48 <=9) {
 					isShipThere = true;
 					break;
 				}
@@ -217,7 +217,7 @@ bool isShipAlreadyThere(string direction, int lineNo, int start, int length = 0)
 		}
 		else {
 			for (int i = start; i < start + length; i++) {
-				if (computerGameGrid[lineNo][i] == '/' || computerGameGrid[lineNo][i] == '1') {
+				if (computerGameGrid[lineNo][i] -48 >=0 && gameGrid[lineNo][i] -48 <=9) {
 					isShipThere = true;
 					break;
 				}
@@ -227,7 +227,7 @@ bool isShipAlreadyThere(string direction, int lineNo, int start, int length = 0)
 	else if (direction == "vertical") {
 		if (length == 0) {
 			for (int i = start; i < start + activeShip[1]; i++) {
-				if (gameGrid[i][lineNo] == '/' || gameGrid[i][lineNo] == '1') {
+				if (gameGrid[i][lineNo]-48 >=0 && gameGrid[i][lineNo] -48 <=9) {
 					isShipThere = true;
 					break;
 				}
@@ -235,7 +235,7 @@ bool isShipAlreadyThere(string direction, int lineNo, int start, int length = 0)
 		}
 		else {
 			for (int i = start; i < start + length; i++) {
-				if (computerGameGrid[i][lineNo] == '/' || computerGameGrid[i][lineNo] == '1') {
+				if (computerGameGrid[i][lineNo] -48 >=0 && gameGrid[i][lineNo] -48 <=9) {
 					isShipThere = true;
 					break;
 				}
@@ -266,13 +266,13 @@ bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0, string grid = "g
 		for (int i = colStart - 1; i <= colEnd + 1; i++) {
 			if (i >= 0 && i <= 9) {
 				if (grid == "computerGameGrid") {
-					if ((computerGameGrid[row - 1][i] == '1' || computerGameGrid[row - 1][i] == '/')) {
+					if ((computerGameGrid[row - 1][i]-48 >=0 && computerGameGrid[row-1][i] -48 <=9)) {
 						isShipDistant = false;
 						break;
 					}
 				}
 				else {
-					if ((gameGrid[row - 1][i] == '1' || gameGrid[row - 1][i] == '/')) {
+					if (gameGrid[row - 1][i] -48 >=0 && computerGameGrid[row - 1][i] -48 <=9) {
 						isShipDistant = false;
 						break;
 					}
@@ -286,13 +286,13 @@ bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0, string grid = "g
 		for (int i = colStart - 1; i <= colEnd + 1; i++) {
 			if (i >= 0 && i <= 9) {
 				if (grid == "computerGameGrid") {
-					if ((computerGameGrid[row + 1][i] == '1' || computerGameGrid[row + 1][i] == '/')) {
+					if ((computerGameGrid[row + 1][i]-48 >=0 && computerGameGrid[row+1][i]-48 <=9)) {
 						isShipDistant = false;
 						break;
 					}
 				}
 				else {
-					if ((gameGrid[row + 1][i] == '1' || gameGrid[row + 1][i] == '/')) {
+					if ((gameGrid[row + 1][i] -48 >=0 && computerGameGrid[row + 1][i] -48 <=9)) {
 						isShipDistant = false;
 						break;
 					}
@@ -305,12 +305,12 @@ bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0, string grid = "g
 	// Left 
 	if (colStart - 1 >= 0) {
 		if (grid == "computerGameGrid") {
-			if (((computerGameGrid[row][colStart - 1]) == '1' || (computerGameGrid[row][colStart - 1]) == '/')) {
+			if (computerGameGrid[row][colStart - 1]-48 >=0 && computerGameGrid[row][colStart-1] -48 <=9) {
 				isShipDistant = false;
 			}
 		}
 		else {
-			if (((gameGrid[row][colStart - 1]) == '1' || (gameGrid[row][colStart - 1]) == '/')) {
+			if (gameGrid[row][colStart - 1] -48 >=0 && gameGrid[row][colStart - 1] -48 <=9) {
 				isShipDistant = false;
 			}
 		}
@@ -319,12 +319,12 @@ bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0, string grid = "g
 	// Right
 	if (colEnd + 1 <= 9) {
 		if (grid == "computerGameGrid") {
-			if ((computerGameGrid[row][colEnd + 1]) == '1' || (computerGameGrid[row][colEnd + 1]) == '/') {
+			if ((computerGameGrid[row][colEnd + 1]) -48 >=0 && computerGameGrid[row][colEnd+1]-48 <=9) {
 				isShipDistant = false;
 			}
 		}
 		else {
-			if ((gameGrid[row][colEnd + 1]) == '1' || (gameGrid[row][colEnd + 1]) == '/') {
+			if ((gameGrid[row][colEnd + 1]) -48 >=0 && gameGrid[row][colEnd + 1] -48 <=9) {
 				isShipDistant = false;
 			}
 		}
@@ -332,7 +332,6 @@ bool shipDistanceOf1(int x, int y, int autoPlaceShipLength = 0, string grid = "g
 
 	return isShipDistant;
 }
-
 
 int getXAxis(int colNo, string grid) {
 	int xAxis = boardStartX + (colNo * boardCellSize);
@@ -366,7 +365,7 @@ void autoPlaceShips(string grid = "gameGrid") {
 		if (activeShip[0]) {
 			// Remove the selected ship if any
 			for (int i = (activeShip[3]); i < (activeShip[3] + activeShip[1]); i++) {
-				boardGrid[activeShip[2]][i] = '0';
+				boardGrid[activeShip[2]][i] = 'e';
 			}
 
 			// Remove the active ship if any
@@ -434,7 +433,7 @@ void autoPlaceShips(string grid = "gameGrid") {
 
 		for (int i = 0; i < boardRows; i++) {
 			for (int k = 0; k < boardCols; k++) {
-				boardGrid[i][k] = '0';
+				boardGrid[i][k] = 'e';
 			}
 		}
 	}
@@ -483,12 +482,13 @@ void showGameGrid(char grid[][10], bool myGrid = 0) {
 			if (k == 9) {
 				DrawLine((xAxis + boardCellSize), (yAxis), xAxis + boardCellSize, (yAxis - boardCellSize), 2, colors[WHITE]);
 			}
-			// Ship head
-			if (grid[i][k] == '/') {
-				DrawTriangle(xAxis + 3, yAxis - boardCellSize + (boardCellSize / 2), xAxis + boardCellSize, yAxis - boardCellSize + boardCellSize + 1, xAxis + boardCellSize, yAxis - boardCellSize, colors[SILVER]);
+			
+			if (k > 0 && (grid[i][k] == '1')) {
+				cout << "yyayya";
 			}
+
 			// Ship
-			if (grid[i][k] == '1') {
+			if (grid[i][k]-48 >=0 && grid[i][k]-48 <=9) {
 				DrawRectangle(xAxis, yAxis + 1 - boardCellSize, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
 			}
 		}
@@ -533,15 +533,12 @@ void showBoard() {
 			int xAxis = boardStartX + (k * boardCellSize);
 			int yAxis = boardStartY - (i * boardCellSize);
 
-			if (boardGrid[i][k] != '/' && boardGrid[i][k] != '1') {
+			if (!(boardGrid[i][k] -48 >= 0 && boardGrid[i][k] -48 <= 9)) {
 				DrawBorderedRect(xAxis, yAxis, boardCellSize, boardCellSize, 1, colors[DIM_GRAY]);
 			}
 			else {
 				// Battleships on the board options
-				if (boardGrid[i][k] == '/') {
-					DrawTriangle(xAxis + 3, yAxis + (boardCellSize / 2), xAxis + boardCellSize, yAxis + boardCellSize + 1, xAxis + boardCellSize, yAxis, colors[SILVER]);
-				}
-				if (boardGrid[i][k] == '1') {
+				if (boardGrid[i][k]-48 >= 0 && boardGrid[i][k]-48 <= 9) {
 					DrawRectangle(xAxis, yAxis + 1, boardCellSize + 2, boardCellSize, colors[DARK_SALMON]);
 				}
 			}
@@ -549,14 +546,9 @@ void showBoard() {
 	}
 }
 
-void setBattleshipInBoardOptions(char grid[][boardCols], int row, int col, int length) {
+void setBattleshipInBoardOptions(char grid[][boardCols],int id, int row, int col, int length) {
 	for (int i = col; i < col + length; i++) {
-		if (i == col) {
-			grid[row][i] = '/';
-		}
-		else {
-			grid[row][i] = '1';
-		}
+			grid[row][i] = char(id-1+48);
 	}
 }
 
@@ -577,7 +569,7 @@ bool areAllShipsPlaced() {
 	bool shipsPlaced = true;
 	for (int i = 0; i < boardRows; i++) {
 		for (int k = 0; k < boardCols; k++) {
-			if (boardGrid[i][k] == '1' || boardGrid[i][k] == '/') {
+			if (boardGrid[i][k]-48 >= 0 && (boardGrid[i][k] - 48 <= 9)) {
 				shipsPlaced = false;
 			}
 		}
@@ -607,7 +599,7 @@ void startNewGame() {
 	// Draw all the ships in options area
 	for (int i = 0; i < 10; i++) {
 		if (shipsInOptions[i][0]) {
-			setBattleshipInBoardOptions(boardGrid, shipsInOptions[i][2], shipsInOptions[i][3], shipsInOptions[i][1]);
+			setBattleshipInBoardOptions(boardGrid, shipsInOptions[i][0], shipsInOptions[i][2], shipsInOptions[i][3], shipsInOptions[i][1]);
 		}
 	}
 
@@ -861,19 +853,14 @@ void MouseClicked(int button, int state, int x, int y) {
 				if (activeShipId && (shipDistanceOf1(getXAxis(colStart, "gameGrid"), getYAxis(row, "gameGrid"), 0)) && (!isShipAlreadyThere("horizontal", row, colStart, 0)) && (colStart >= 0)) {
 					// Place the battleship
 					for (int i = colStart; i <= colEnd; i++) {
-						// Head of ship	
-						if (i == colStart) {
-							gameGrid[row][i] = '/';
-						}
-						else {
-							// Rest of the ship
-							gameGrid[row][i] = '1';
-						}
+	
+						// Rest of the ship
+						gameGrid[row][i] = char(activeShipId-1+48);
 					}
 
 					// Remove the selected ship
 					for (int i = (activeShipCol); i < (activeShipCol + activeShipLength); i++) {
-						boardGrid[activeShipRow][i] = '0';
+						boardGrid[activeShipRow][i] = 'e';
 					}
 					resetShipInfo(shipsInOptions[activeShipId - 1]);
 					resetShipInfo(activeShip);
